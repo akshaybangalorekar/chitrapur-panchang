@@ -113,6 +113,7 @@
     renderPeople();
     initSearch();
     initTheme();
+    initCollapse();
     monthCursor = (todayISO() in dayMap ? todayISO() : KEYS[KEYS.length - 1]).slice(0, 7);
     renderMonth();
     initControls();
@@ -537,6 +538,36 @@
         return `${nm} from ${fmtT(t.start, tz)}`;
       }).join('<span class="sep">·</span>');
     } else line.hidden = true;
+  }
+
+  /* ── collapsible sections ────────────────────────────────── */
+  const COLLAPSE_KEY = "chitrapur.collapsed.v1";
+
+  function initCollapse() {
+    let store = {};
+    try { store = JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || {}; } catch { /* ignore */ }
+    const phone = window.matchMedia("(max-width: 760px)").matches;
+    document.querySelectorAll(".collapse-toggle").forEach(btn => {
+      const card = btn.closest(".card");
+      if (!card) return;
+      const id = btn.dataset.card || "card";
+      const open = store[id] !== undefined ? !!store[id]
+        : !(phone && btn.dataset.mobile === "closed");
+      setOpen(btn, open);
+      btn.addEventListener("click", () => {
+        const next = btn.getAttribute("aria-expanded") !== "true";
+        setOpen(btn, next);
+        store[id] = next;
+        try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(store)); } catch { /* ignore */ }
+      });
+    });
+  }
+
+  function setOpen(btn, open) {
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", (open ? "Collapse" : "Expand") + " section");
+    const card = btn.closest(".card");
+    if (card) card.classList.toggle("collapsed", !open);
   }
 
   /* ── theme ───────────────────────────────────────────────── */

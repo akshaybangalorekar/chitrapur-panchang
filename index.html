@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Shrī Chitrāpur Mat͟h · Pañchāṅga</title>
 <meta name="description" content="Daily tithi, upcoming observances and Hindu-calendar birthdays, from the Shri Chitrapur Math calendar.">
 <meta name="theme-color" content="#6b2320">
@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236b2320'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='%23d8b477' font-family='serif'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
 <script>
-  // set the theme before first paint to avoid a flash
   (function () {
     try {
       var t = localStorage.getItem("chitrapur.theme");
@@ -50,7 +49,7 @@
 
 <main class="wrap">
 
-  <!-- ── Today ─────────────────────────────────────────────── -->
+  <!-- ── Today (always open) ───────────────────────────────── -->
   <section class="card today-card" aria-labelledby="today-h">
     <div class="today-head">
       <h2 class="eyebrow" id="today-h">Today&rsquo;s Pañchāṅga</h2>
@@ -92,122 +91,163 @@
     <p id="t-date" class="today-date">—</p>
   </section>
 
-  <!-- ── Search ────────────────────────────────────────────── -->
-  <section class="card search-card" aria-labelledby="q-h">
-    <h2 class="eyebrow" id="q-h">Find a day</h2>
-    <div class="search-field">
-      <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
-      <input id="q" type="search" autocomplete="off" placeholder="Ramanavami, Ekadashi, Diwali&hellip;">
-    </div>
-    <div class="quick-tags" id="q-quick">
-      <button type="button" data-q="Ekadashi">Ekādashī</button>
-      <button type="button" data-q="Purnima">Pūrṇimā</button>
-      <button type="button" data-q="Amavasya">Amāvasyā</button>
-      <button type="button" data-q="Navaratri">Navarātri</button>
-    </div>
-    <ul id="q-results" class="q-results"></ul>
-    <p id="q-empty" class="muted small" hidden>No match in the calendar data. The Mat͟h publishes its almanac about a year ahead, so a festival may not be listed yet &mdash; try the tithi name instead (e.g. <em>Navami</em>, <em>Chaturthi</em>).</p>
-  </section>
-
   <!-- ── Reminders ─────────────────────────────────────────── -->
   <section class="card" aria-labelledby="rem-h">
     <div class="card-head">
-      <div>
+      <div class="card-head-title">
         <h2 class="eyebrow" id="rem-h">Coming up</h2>
         <p class="card-note">Important days and observances, plus your family&rsquo;s.</p>
       </div>
-      <label class="window-pick">Next
-        <select id="window-days">
-          <option value="10" selected>10 days</option>
-          <option value="15">15 days</option>
-          <option value="30">30 days</option>
-        </select>
-      </label>
+      <div class="card-head-tools">
+        <label class="window-pick">Next
+          <select id="window-days">
+            <option value="10" selected>10 days</option>
+            <option value="15">15 days</option>
+            <option value="30">30 days</option>
+          </select>
+        </label>
+        <button class="collapse-toggle" type="button" data-card="rem" aria-expanded="true"
+                aria-controls="body-rem" aria-label="Collapse section">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
     </div>
-    <ul id="reminder-list" class="timeline"></ul>
-    <p id="rem-empty" class="muted" hidden>Nothing in this window.</p>
+    <div class="card-body" id="body-rem">
+      <ul id="reminder-list" class="timeline"></ul>
+      <p id="rem-empty" class="muted" hidden>Nothing in this window.</p>
+    </div>
+  </section>
+
+  <!-- ── Search ────────────────────────────────────────────── -->
+  <section class="card search-card" aria-labelledby="q-h">
+    <div class="card-head">
+      <div class="card-head-title">
+        <h2 class="eyebrow" id="q-h">Find a day</h2>
+        <p class="card-note">Search the Mat͟h&rsquo;s own calendar.</p>
+      </div>
+      <div class="card-head-tools">
+        <button class="collapse-toggle" type="button" data-card="search" data-mobile="closed"
+                aria-expanded="true" aria-controls="body-search" aria-label="Collapse section">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="card-body" id="body-search">
+      <div class="search-field">
+        <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
+        <input id="q" type="search" autocomplete="off" placeholder="Vardhantī, Samārādhanā, Ekādashī&hellip;">
+      </div>
+      <div class="quick-tags" id="q-quick">
+        <button type="button" data-q="Vardhanti">Vardhantī</button>
+        <button type="button" data-q="Samaradhana">Samārādhanā</button>
+        <button type="button" data-q="Ekadashi">Ekādashī</button>
+        <button type="button" data-q="Purnima">Pūrṇimā</button>
+        <button type="button" data-q="Amavasya">Amāvasyā</button>
+        <button type="button" data-q="Navaratri">Navarātri</button>
+      </div>
+      <ul id="q-results" class="q-results"></ul>
+      <p id="q-empty" class="muted small" hidden>Nothing in the Mat͟h&rsquo;s calendar matches that. Its almanac is published about a year ahead, so a festival may not be listed yet &mdash; try the tithi name instead (e.g. <em>Navami</em>, <em>Chaturthi</em>).</p>
+    </div>
   </section>
 
   <!-- ── My people ─────────────────────────────────────────── -->
   <section class="card" aria-labelledby="ppl-h">
     <div class="card-head">
-      <div>
+      <div class="card-head-title">
         <h2 class="eyebrow" id="ppl-h">My people</h2>
         <p class="card-note">Birthdays by the Hindu calendar &mdash; saved only in this browser.</p>
       </div>
-      <div class="card-head-actions">
-        <button id="ppl-export" class="ghost small-btn">Export</button>
-        <button id="ppl-import" class="ghost small-btn">Import</button>
-        <input id="ppl-file" type="file" accept="application/json" hidden>
+      <div class="card-head-tools">
+        <div class="card-head-actions">
+          <button id="ppl-export" class="ghost small-btn">Export</button>
+          <button id="ppl-import" class="ghost small-btn">Import</button>
+          <input id="ppl-file" type="file" accept="application/json" hidden>
+        </div>
+        <button class="collapse-toggle" type="button" data-card="people" aria-expanded="true"
+                aria-controls="body-people" aria-label="Collapse section">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
       </div>
     </div>
+    <div class="card-body" id="body-people">
+      <ul id="ppl-list" class="people"></ul>
+      <p id="ppl-empty" class="muted empty-state">No one added yet.</p>
 
-    <ul id="ppl-list" class="people"></ul>
-    <p id="ppl-empty" class="muted empty-state">No one added yet.</p>
-
-    <details class="add-wrap" open>
-      <summary class="add-summary">Add a birthday</summary>
-      <form id="ppl-form" class="ppl-form" autocomplete="off">
-        <input type="hidden" id="ppl-id">
-        <div class="field">
-          <label for="ppl-name">Name</label>
-          <input id="ppl-name" required placeholder="e.g. Aaji">
-        </div>
-        <div class="field">
-          <label for="ppl-basis">Basis</label>
-          <select id="ppl-basis">
-            <option value="tithi">Tithi</option>
-            <option value="nakshatra">Nakshatra</option>
-            <option value="both">Tithi &amp; nakshatra</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="ppl-masa">Māsa</label>
-          <select id="ppl-masa"></select>
-        </div>
-        <div class="field" id="f-paksha">
-          <label for="ppl-paksha">Paksha</label>
-          <select id="ppl-paksha">
-            <option value="Shukla">Shukla</option>
-            <option value="Krishna">Krishna</option>
-          </select>
-        </div>
-        <div class="field" id="f-tithi">
-          <label for="ppl-tithi">Tithi</label>
-          <select id="ppl-tithi"></select>
-        </div>
-        <div class="field" id="f-nak">
-          <label for="ppl-nak">Nakshatra</label>
-          <select id="ppl-nak"></select>
-        </div>
-        <div class="field field-actions">
-          <button type="submit" class="primary" id="ppl-submit">Add</button>
-          <button type="button" class="ghost" id="ppl-cancel" hidden>Cancel</button>
-        </div>
-      </form>
-      <p class="muted small hint">Choose the birth māsa for the yearly date; &ldquo;Any māsa&rdquo; shows the next occurrence.</p>
-    </details>
+      <details class="add-wrap" open>
+        <summary class="add-summary">Add a birthday</summary>
+        <form id="ppl-form" class="ppl-form" autocomplete="off">
+          <input type="hidden" id="ppl-id">
+          <div class="field">
+            <label for="ppl-name">Name</label>
+            <input id="ppl-name" required placeholder="e.g. Aaji">
+          </div>
+          <div class="field">
+            <label for="ppl-basis">Basis</label>
+            <select id="ppl-basis">
+              <option value="tithi">Tithi</option>
+              <option value="nakshatra">Nakshatra</option>
+              <option value="both">Tithi &amp; nakshatra</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ppl-masa">Māsa</label>
+            <select id="ppl-masa"></select>
+          </div>
+          <div class="field" id="f-paksha">
+            <label for="ppl-paksha">Paksha</label>
+            <select id="ppl-paksha">
+              <option value="Shukla">Shukla</option>
+              <option value="Krishna">Krishna</option>
+            </select>
+          </div>
+          <div class="field" id="f-tithi">
+            <label for="ppl-tithi">Tithi</label>
+            <select id="ppl-tithi"></select>
+          </div>
+          <div class="field" id="f-nak">
+            <label for="ppl-nak">Nakshatra</label>
+            <select id="ppl-nak"></select>
+          </div>
+          <div class="field field-actions">
+            <button type="submit" class="primary" id="ppl-submit">Add</button>
+            <button type="button" class="ghost" id="ppl-cancel" hidden>Cancel</button>
+          </div>
+        </form>
+        <p class="muted small hint">Choose the birth māsa for the yearly date; &ldquo;Any māsa&rdquo; shows the next occurrence.</p>
+      </details>
+    </div>
   </section>
 
   <!-- ── Browse ────────────────────────────────────────────── -->
   <section class="card" aria-labelledby="br-h">
     <div class="card-head">
-      <h2 class="eyebrow" id="br-h">Browse the calendar</h2>
-      <div class="month-nav">
-        <button id="mo-prev" class="ghost" aria-label="Previous month">&#8249;</button>
-        <strong id="mo-label">—</strong>
-        <button id="mo-next" class="ghost" aria-label="Next month">&#8250;</button>
+      <div class="card-head-title">
+        <h2 class="eyebrow" id="br-h">Browse the calendar</h2>
+        <p class="card-note">Every day&rsquo;s tithi and nakshatra.</p>
+      </div>
+      <div class="card-head-tools">
+        <div class="month-nav">
+          <button id="mo-prev" class="ghost" aria-label="Previous month">&#8249;</button>
+          <strong id="mo-label">—</strong>
+          <button id="mo-next" class="ghost" aria-label="Next month">&#8250;</button>
+        </div>
+        <button class="collapse-toggle" type="button" data-card="browse" data-mobile="closed"
+                aria-expanded="true" aria-controls="body-browse" aria-label="Collapse section">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
       </div>
     </div>
-    <div class="month-grid" id="month-grid" role="grid" aria-label="Month calendar"></div>
-    <div class="month-legend muted small">
-      <span><b>SH</b> Shukla</span><span><b>KR</b> Krishna</span>
-      <span><i class="mk purnima"></i>Pūrṇimā</span>
-      <span><i class="mk amavasya"></i>Amāvasyā</span>
-      <span><i class="mk obs"></i>Observance</span>
-      <span><i class="mk event"></i>Mat͟h day</span>
+    <div class="card-body" id="body-browse">
+      <div class="month-grid" id="month-grid" role="grid" aria-label="Month calendar"></div>
+      <div class="month-legend muted small">
+        <span><b>SH</b> Shukla</span><span><b>KR</b> Krishna</span>
+        <span><i class="mk purnima"></i>Pūrṇimā</span>
+        <span><i class="mk amavasya"></i>Amāvasyā</span>
+        <span><i class="mk obs"></i>Observance</span>
+        <span><i class="mk event"></i>Mat͟h day</span>
+      </div>
+      <div id="day-detail" class="day-detail" hidden></div>
     </div>
-    <div id="day-detail" class="day-detail" hidden></div>
   </section>
 
   <p id="data-note" class="muted small data-note"></p>
@@ -218,7 +258,8 @@
     <div class="footer-rule"><span>❖</span></div>
     <p>Pañchāṅga data from the public calendar feeds of
       <a href="https://www.chitrapurmath.net/" target="_blank" rel="noopener">Shrī Chitrāpur Mat͟h</a>.
-      Amānta māsa convention; tithi boundaries follow the Mat͟h&rsquo;s own calendar.</p>
+      Amānta māsa convention; tithi boundaries follow the Mat͟h&rsquo;s own calendar.
+      Only the observances and festivals listed in the Mat͟h&rsquo;s calendar appear here.</p>
     <p class="muted small">A convenience companion, not a substitute for the Mat͟h&rsquo;s printed calendar
       or your local pañchāṅga.</p>
   </div>

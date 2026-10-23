@@ -447,3 +447,114 @@ select:focus,input:focus{outline:none;border-color:var(--gold-2);
 .q-results li.q-past{opacity:.62}
 .q-results li.q-past:hover{opacity:1}
 .q-results li.q-past .q-d{color:var(--muted)}
+
+/* ══════════════════════════════════════════════════════════════
+   Collapsible sections
+   ══════════════════════════════════════════════════════════════ */
+.card-head-title{min-width:0}
+.card-head-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.collapse-toggle{
+  width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;
+  background:var(--surface-solid);border:1px solid var(--line);color:var(--muted);
+  box-shadow:var(--shadow-1);touch-action:manipulation;
+  transition:border-color .25s var(--ease),color .25s var(--ease);
+}
+.collapse-toggle:hover{border-color:var(--gold-2);color:var(--accent)}
+.collapse-toggle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;transform:rotate(180deg);
+  transition:transform .32s var(--ease)}
+.card.collapsed .collapse-toggle svg{transform:rotate(0deg)}
+.card.collapsed .card-head{margin-bottom:0}
+.card.collapsed{padding-bottom:24px}
+.card-body{min-width:0}
+.search-card .search-field{margin-top:0}
+
+/* ══════════════════════════════════════════════════════════════
+   Device sizing — laptop / iPad / phone
+   ══════════════════════════════════════════════════════════════ */
+body{
+  padding-left:env(safe-area-inset-left,0px);
+  padding-right:env(safe-area-inset-right,0px);
+  -webkit-tap-highlight-color:transparent;
+}
+button,select,input,summary,a{touch-action:manipulation}
+
+/* laptops & small desktops */
+@media (max-width:1120px){
+  .wrap{width:min(1000px,94vw)}
+}
+/* iPad landscape / small laptop */
+@media (max-width:1024px){
+  .card{padding:26px 26px}
+  .search-card{padding:22px 26px 24px}
+  .month-grid{gap:5px}
+}
+/* iPad portrait — stack the hero, keep timings 3-up */
+@media (max-width:900px){
+  .today-main{grid-template-columns:1fr;gap:26px}
+  .today-card::before{background:
+    radial-gradient(520px 220px at 10% 0%,rgba(198,162,98,.16),transparent 62%)}
+  .timings{grid-template-columns:repeat(3,1fr)}
+  .panchanga-grid>div{padding:13px 0}
+}
+/* phones */
+@media (max-width:760px){
+  .card{padding:22px 18px;border-radius:var(--r-md)}
+  .search-card{padding:20px 18px}
+  .timings{grid-template-columns:repeat(2,1fr)}
+  .card-head{align-items:flex-start;gap:12px}
+  .card-head-tools{width:100%;justify-content:space-between}
+  .card-head-title{flex:1 1 100%}
+  .q-results li{padding:11px 0}
+}
+@media (max-width:560px){
+  .month-grid{gap:4px}
+  .day{min-height:60px;padding:5px;border-radius:var(--r-sm)}
+  .day .nk{display:none}
+  .day .t{font-size:.58rem}
+  .day .num{font-size:1rem}
+  .dow{font-size:.54rem;letter-spacing:.08em}
+  .month-legend{gap:12px}
+  .q-results li{flex-direction:column;align-items:flex-start;gap:3px}
+  .q-d{text-align:left}
+  .q-d .q-m{display:inline;margin-left:7px}
+  .brand-text h1{font-size:1.08rem}
+  .brand-sub{display:none}
+}
+@media (max-width:380px){
+  .month-grid{gap:3px}
+  .day{min-height:52px;padding:4px}
+  .day .t{font-size:.54rem}
+  .timings{grid-template-columns:1fr 1fr;gap:8px}
+  .t-item{padding:11px 12px}
+}
+
+/* touch devices: comfortable targets, no hover-lift */
+@media (pointer:coarse){
+  .ghost{min-height:42px;padding:9px 16px}
+  .icon-round,.collapse-toggle{width:44px;height:44px}
+  .quick-tags button{min-height:40px;padding:8px 16px}
+  .icon-btn{min-width:44px;min-height:44px}
+  select,input{min-height:46px}
+  .add-summary{padding:14px 0}
+  .day{min-height:76px}
+  .day:hover{transform:none;box-shadow:none;border-color:var(--line)}
+  .day:active{background:var(--tint-2)}
+  .q-results li:hover{padding-left:0}
+  .icon-round:hover,.collapse-toggle:hover{transform:none}
+}
+
+/* short viewports (landscape phones) */
+@media (max-height:480px) and (orientation:landscape){
+  .site-header{position:static}
+  .accent-bar{position:absolute}
+}
+
+/* phone: the date is already shown in the today card */
+@media (max-width:560px){
+  .header-date{display:none}
+  .header-inner{padding:12px 0}
+}
+
+/* the actual hide — toggled by .collapsed on the card */
+.card.collapsed > .card-body{display:none}
