@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shri Chitrapur Math · Panchang</title>
+<meta name="description" content="Daily tithi, upcoming observances and Hindu-calendar birthdays, from the Shri Chitrapur Math calendar.">
+<meta name="theme-color" content="#6b1d1d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236b1d1d'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23e8b64c' font-family='serif'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">ॐ</span>
+      <div>
+        <h1>Shrī Chitrāpur Mat͟h</h1>
+        <p class="brand-sub">Pañchāṅga · daily tithi &amp; observances</p>
+      </div>
+    </div>
+    <div class="header-date">
+      <span id="hd-weekday">—</span>
+      <strong id="hd-date">—</strong>
+    </div>
+  </div>
+</header>
+
+<div id="alert-banner" class="alert-banner" hidden></div>
+
+<main class="wrap">
+
+  <!-- ── Today ─────────────────────────────────────────────── -->
+  <section class="card today-card" aria-labelledby="today-h">
+    <div class="today-head">
+      <h2 id="today-h" class="card-title">Today&rsquo;s Pañchāṅga</h2>
+      <div class="day-nav">
+        <button id="prev-day" class="ghost" title="Previous day" aria-label="Previous day">‹</button>
+        <button id="today-btn" class="ghost" title="Back to today">Today</button>
+        <button id="next-day" class="ghost" title="Next day" aria-label="Next day">›</button>
+      </div>
+    </div>
+
+    <div class="today-main">
+      <div class="tithi-big">
+        <span id="t-paksha" class="paksha-chip">—</span>
+        <h3 id="t-tithi">—</h3>
+        <p id="t-alt" class="tithi-alt" hidden></p>
+        <div id="t-obs" class="chips"></div>
+      </div>
+      <dl class="panchanga-grid">
+        <div><dt>Māsa</dt><dd id="t-masa">—</dd></div>
+        <div><dt>Ṛtu</dt><dd id="t-ritu">—</dd></div>
+        <div><dt>Nakshatra</dt><dd id="t-nak">—</dd></div>
+        <div><dt>Saṁvatsara</dt><dd id="t-samvatsara">—</dd></div>
+      </dl>
+    </div>
+    <p id="t-date" class="today-date">—</p>
+  </section>
+
+  <!-- ── Reminders ─────────────────────────────────────────── -->
+  <section class="card" aria-labelledby="rem-h">
+    <div class="card-head">
+      <h2 id="rem-h" class="card-title">Coming up</h2>
+      <label class="window-pick">Show next
+        <select id="window-days">
+          <option value="10" selected>10 days</option>
+          <option value="15">15 days</option>
+          <option value="30">30 days</option>
+        </select>
+      </label>
+    </div>
+    <p class="muted small">Important days and observances from the Mat͟h calendar, plus your family&rsquo;s days.</p>
+    <ul id="reminder-list" class="timeline"></ul>
+    <p id="rem-empty" class="muted" hidden>Nothing in this window.</p>
+  </section>
+
+  <!-- ── My people ─────────────────────────────────────────── -->
+  <section class="card" aria-labelledby="ppl-h">
+    <div class="card-head">
+      <h2 id="ppl-h" class="card-title">My people</h2>
+      <div class="card-head-actions">
+        <button id="ppl-export" class="ghost small-btn">Export</button>
+        <button id="ppl-import" class="ghost small-btn">Import</button>
+        <input id="ppl-file" type="file" accept="application/json" hidden>
+      </div>
+    </div>
+    <p class="muted small">Add birthdays by the Hindu calendar. Saved only in this browser &mdash; nothing is uploaded. Choose the birth <em>māsa</em> for the yearly date; &ldquo;Any māsa&rdquo; shows the next occurrence of that tithi or star.</p>
+
+    <form id="ppl-form" class="ppl-form" autocomplete="off">
+      <input type="hidden" id="ppl-id">
+      <div class="field">
+        <label for="ppl-name">Name</label>
+        <input id="ppl-name" required placeholder="e.g. Aaji">
+      </div>
+      <div class="field">
+        <label for="ppl-basis">Birthday basis</label>
+        <select id="ppl-basis">
+          <option value="tithi">Tithi (lunar day)</option>
+          <option value="nakshatra">Nakshatra (birth star)</option>
+          <option value="both">Both</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="ppl-masa">Māsa (birth month)</label>
+        <select id="ppl-masa"></select>
+      </div>
+      <div class="field" id="f-paksha">
+        <label for="ppl-paksha">Paksha</label>
+        <select id="ppl-paksha">
+          <option value="Shukla">Shukla (waxing)</option>
+          <option value="Krishna">Krishna (waning)</option>
+        </select>
+      </div>
+      <div class="field" id="f-tithi">
+        <label for="ppl-tithi">Tithi</label>
+        <select id="ppl-tithi"></select>
+      </div>
+      <div class="field" id="f-nak">
+        <label for="ppl-nak">Nakshatra</label>
+        <select id="ppl-nak"></select>
+      </div>
+      <div class="field field-actions">
+        <button type="submit" class="primary" id="ppl-submit">Add</button>
+        <button type="button" class="ghost" id="ppl-cancel" hidden>Cancel</button>
+      </div>
+    </form>
+
+    <ul id="ppl-list" class="people"></ul>
+    <p id="ppl-empty" class="muted">No one added yet.</p>
+  </section>
+
+  <!-- ── Browse ────────────────────────────────────────────── -->
+  <section class="card" aria-labelledby="br-h">
+    <div class="card-head">
+      <h2 id="br-h" class="card-title">Browse the calendar</h2>
+      <div class="month-nav">
+        <button id="mo-prev" class="ghost" aria-label="Previous month">‹</button>
+        <strong id="mo-label">—</strong>
+        <button id="mo-next" class="ghost" aria-label="Next month">›</button>
+      </div>
+    </div>
+    <div class="month-legend muted small">
+      <span><b>SH</b> Shukla</span><span><b>KR</b> Krishna</span>
+      <span class="dot-purnima"></span><span>Pūrṇimā</span>
+      <span class="dot-amavasya"></span><span>Amāvasyā</span>
+      <span class="dot-obs"></span><span>Observance</span>
+    </div>
+    <div id="month-grid" class="month-grid" role="grid" aria-label="Month calendar"></div>
+    <div id="day-detail" class="day-detail" hidden></div>
+  </section>
+
+  <p id="data-note" class="muted small data-note"></p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Pañchāṅga data from the public calendar feeds of
+      <a href="https://www.chitrapurmath.net/" target="_blank" rel="noopener">Shrī Chitrāpur Mat͟h</a>.
+      Amānta māsa convention. Times and tithi boundaries follow the Mat͟h&rsquo;s own calendar.</p>
+    <p class="muted small">For religious observance, please confirm with the Mat͟h&rsquo;s printed calendar or your local pañchāṅga.</p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
