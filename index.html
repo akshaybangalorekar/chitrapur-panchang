@@ -5,14 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shrī Chitrāpur Mat͟h · Pañchāṅga</title>
 <meta name="description" content="Daily tithi, upcoming observances and Hindu-calendar birthdays, from the Shri Chitrapur Math calendar.">
-<meta name="theme-color" content="#5b2222">
+<meta name="theme-color" content="#6b2320">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%235b2222'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%23c8a86a' font-family='serif'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236b2320'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='%23d8b477' font-family='serif'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
+<script>
+  // set the theme before first paint to avoid a flash
+  (function () {
+    try {
+      var t = localStorage.getItem("chitrapur.theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch (e) { /* ignore */ }
+  })();
+</script>
 </head>
 <body>
+<div class="accent-bar" aria-hidden="true"></div>
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -23,9 +33,15 @@
         <p class="brand-sub">Pañchāṅga</p>
       </div>
     </div>
-    <div class="header-date">
-      <span id="hd-weekday">—</span>
-      <strong id="hd-date">—</strong>
+    <div class="header-right">
+      <div class="header-date">
+        <span id="hd-weekday">—</span>
+        <strong id="hd-date">—</strong>
+      </div>
+      <button id="theme-toggle" class="icon-round" type="button" title="Switch theme" aria-label="Switch between light and dark">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g class="rays"><path d="M12 2.4v2.6M12 19v2.6M2.4 12h2.6M19 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
     </div>
   </div>
 </header>
@@ -79,7 +95,10 @@
   <!-- ── Search ────────────────────────────────────────────── -->
   <section class="card search-card" aria-labelledby="q-h">
     <h2 class="eyebrow" id="q-h">Find a day</h2>
-    <input id="q" type="search" autocomplete="off" placeholder="Try &ldquo;Ramanavami&rdquo;, &ldquo;Ekadashi&rdquo;, &ldquo;Diwali&rdquo;&hellip;">
+    <div class="search-field">
+      <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.2 4.2"/></svg>
+      <input id="q" type="search" autocomplete="off" placeholder="Ramanavami, Ekadashi, Diwali&hellip;">
+    </div>
     <div class="quick-tags" id="q-quick">
       <button type="button" data-q="Ekadashi">Ekādashī</button>
       <button type="button" data-q="Purnima">Pūrṇimā</button>

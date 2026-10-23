@@ -74,6 +74,7 @@
     renderReminders();
     renderPeople();
     initSearch();
+    initTheme();
     monthCursor = (todayISO() in dayMap ? todayISO() : KEYS[KEYS.length - 1]).slice(0, 7);
     renderMonth();
     initControls();
@@ -498,6 +499,21 @@
         return `${nm} from ${fmtT(t.start, tz)}`;
       }).join('<span class="sep">·</span>');
     } else line.hidden = true;
+  }
+
+  /* ── theme ───────────────────────────────────────────────── */
+  function initTheme() {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    const effective = () => document.documentElement.dataset.theme
+      || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    btn.addEventListener("click", () => {
+      const next = effective() === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem("chitrapur.theme", next); } catch { /* ignore */ }
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", next === "dark" ? "#131110" : "#6b2320");
+    });
   }
 
   /* ── search ──────────────────────────────────────────────── */
