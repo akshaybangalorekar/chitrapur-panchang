@@ -10,6 +10,11 @@ on GitHub Pages.
 - **Today's pañchāṅga** — tithi, paksha, māsa, ṛtu, nakshatra and saṁvatsara, with
   the day's observances (Ekādashī, Pūrṇimā, Amāvasyā, Pradoṣa, Saṅkaṣṭī).
   On transition days both tithis are shown, e.g. `KR7/KR8`.
+- **Timings** — sunrise, sunset, Rāhu Kāla, Yamagaṇḍa, Gulika and Abhijit muhūrta
+  for the day, plus the exact moment each tithi begins and ends. Choose your place
+  (or use your device location) so the times are right for you.
+- **Find a day** — type a festival, Vardhantī or tithi (`Ramanavami`, `Ekadashi`,
+  `Navaratri`) and jump to its next occurrence.
 - **Coming up** — every important day and observance in the next 10 days
   (15 and 30 days selectable), plus your family's birthdays.
 - **My people** — add a birthday by tithi + māsa, by nakshatra, or both; the site
@@ -31,6 +36,16 @@ The Math publishes its calendar as public iCal feeds on
 `scripts/build_data.py` downloads both, parses them and writes a single
 `data/panchang.json` that the site reads. The feeds use the **Amānta** māsa
 convention and the Math's own tithi boundaries.
+
+The feeds carry only tithi *names* per day, so the timings come from
+`assets/panchang.js` — a small self-contained engine (Meeus longitude series for
+the Sun and Moon, NOAA for sunrise/sunset). It needs no packages and no network.
+Tithi boundaries are global instants; sunrise-based windows are computed for the
+place you pick.
+
+> The printed Mat͟h calendar gives Rāhu Kāla on a fixed 6 a.m. sunrise basis, so its
+> clock times differ by a few minutes from the ones computed here from the real
+> sunrise. Where it matters, follow the printed calendar.
 
 ```bash
 python3 scripts/build_data.py      # regenerate data/panchang.json

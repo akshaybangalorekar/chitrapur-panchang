@@ -38,10 +38,15 @@
   <section class="card today-card" aria-labelledby="today-h">
     <div class="today-head">
       <h2 class="eyebrow" id="today-h">Today&rsquo;s Pañchāṅga</h2>
-      <div class="day-nav">
-        <button id="prev-day" class="ghost" title="Previous day" aria-label="Previous day">&#8249;</button>
-        <button id="today-btn" class="ghost" title="Back to today">Today</button>
-        <button id="next-day" class="ghost" title="Next day" aria-label="Next day">&#8250;</button>
+      <div class="today-tools">
+        <label class="place-pick">Place
+          <select id="place" aria-label="Place for sunrise and muhūrta times"></select>
+        </label>
+        <div class="day-nav">
+          <button id="prev-day" class="ghost" title="Previous day" aria-label="Previous day">&#8249;</button>
+          <button id="today-btn" class="ghost" title="Back to today">Today</button>
+          <button id="next-day" class="ghost" title="Next day" aria-label="Next day">&#8250;</button>
+        </div>
       </div>
     </div>
 
@@ -59,7 +64,30 @@
         <div><dt>Saṁvatsara</dt><dd id="t-samvatsara">—</dd></div>
       </dl>
     </div>
+    <div class="timings" id="timings" hidden>
+      <div class="t-item"><span class="t-k">Sunrise</span><span class="t-v" id="tm-sunrise">—</span></div>
+      <div class="t-item"><span class="t-k">Sunset</span><span class="t-v" id="tm-sunset">—</span></div>
+      <div class="t-item"><span class="t-k">Rāhu Kāla</span><span class="t-v" id="tm-rahu">—</span></div>
+      <div class="t-item"><span class="t-k">Yamagaṇḍa</span><span class="t-v" id="tm-yama">—</span></div>
+      <div class="t-item"><span class="t-k">Gulika</span><span class="t-v" id="tm-gulika">—</span></div>
+      <div class="t-item"><span class="t-k">Abhijit</span><span class="t-v" id="tm-abhijit">—</span></div>
+    </div>
+    <p id="tm-tithi" class="timings-tithi" hidden></p>
     <p id="t-date" class="today-date">—</p>
+  </section>
+
+  <!-- ── Search ────────────────────────────────────────────── -->
+  <section class="card search-card" aria-labelledby="q-h">
+    <h2 class="eyebrow" id="q-h">Find a day</h2>
+    <input id="q" type="search" autocomplete="off" placeholder="Try &ldquo;Ramanavami&rdquo;, &ldquo;Ekadashi&rdquo;, &ldquo;Diwali&rdquo;&hellip;">
+    <div class="quick-tags" id="q-quick">
+      <button type="button" data-q="Ekadashi">Ekādashī</button>
+      <button type="button" data-q="Purnima">Pūrṇimā</button>
+      <button type="button" data-q="Amavasya">Amāvasyā</button>
+      <button type="button" data-q="Navaratri">Navarātri</button>
+    </div>
+    <ul id="q-results" class="q-results"></ul>
+    <p id="q-empty" class="muted small" hidden>No match in the calendar data.</p>
   </section>
 
   <!-- ── Reminders ─────────────────────────────────────────── -->
@@ -177,6 +205,7 @@
   </div>
 </footer>
 
+<script src="assets/panchang.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

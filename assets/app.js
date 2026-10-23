@@ -10,6 +10,20 @@
   const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
+  const PLACE_KEY = "chitrapur.place.v1";
+  const PLACES = [
+    ["Shirali", 13.9953, 74.7178, 330], ["Bengaluru", 12.9716, 77.5946, 330],
+    ["Mumbai", 19.0760, 72.8777, 330], ["Delhi", 28.6139, 77.2090, 330],
+    ["Kolkata", 22.5726, 88.3639, 330], ["Chennai", 13.0827, 80.2707, 330],
+    ["Hyderabad", 17.3850, 78.4867, 330], ["Pune", 18.5204, 73.8567, 330],
+    ["Mangaluru", 12.9141, 74.8560, 330]];
+  const TRANSLIT = { "ṛ": "ri", "ṣ": "sh", "ś": "sh", "ṭ": "t", "ḍ": "d", "ṇ": "n",
+    "ṃ": "m", "ṅ": "n", "ñ": "n", "ā": "a", "ī": "i", "ū": "u", "ḥ": "h",
+    "ṁ": "m", "ḷ": "l" };
+  const norm = s => String(s == null ? "" : s)
+    .replace(/[ṛṣśṭḍṇṃṅñāīūḥṁḷ]/g, c => TRANSLIT[c] || c)
+    .normalize("NFD").replace(/[\u0300-\u036f\u0332\u035f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
   let DATA = null, KEYS = [], dayMap = null;
 
@@ -52,9 +66,11 @@
     KEYS = Object.keys(dayMap).sort();
     initHeader();
     initSelects();
+    initPlace();
     renderToday(todayISO());
     renderReminders();
     renderPeople();
+    initSearch();
     monthCursor = (todayISO() in dayMap ? todayISO() : KEYS[KEYS.length - 1]).slice(0, 7);
     renderMonth();
     initControls();
@@ -76,6 +92,7 @@
 
   /* ── today card ──────────────────────────────────────────── */
   function renderToday(date) {
+    renderTimings(date);
     const r = rec(date);
     const set = (id, v) => document.getElementById(id).textContent = v || "—";
     document.getElementById("t-date").textContent =
@@ -332,7 +349,7 @@
   }
 
   /* ── month view ──────────────────────────────────────────── */
-  let monthCursor = null;
+  let monthCursor = null, lastShown = null;
 
   function renderMonth() {
     const [y, m] = monthCursor.split("-").map(Number);
@@ -387,13 +404,151 @@
     box.innerHTML = html;
   }
 
+  /* ── place + timings ─────────────────────────────────────── */
+  function currentPlace() {
+    try {
+      const p = JSON.parse(localStorage.getItem(PLACE_KEY));
+      if (p && p.lat != null) return p;
+    } catch { /* ignore */ }
+    const [name, lat, lon, tz] = PLACES[0];
+    return { name, lat, lon, tz };
+  }
+  const fmtT = (d, tz) => {
+    if (!d) return "—";
+    const t = new Date(d.getTime() + tz * 60000);
+    return `${pad(t.getUTCHours())}:${pad(t.getUTCMinutes())}`;
+  };
+  const span = (pair, tz) => pair && pair[0] && pair[1]
+    ? `${fmtT(pair[0], tz)}–${fmtT(pair[1], tz)}` : "—";
+
+  function initPlace() {
+    const sel = document.getElementById("place");
+    sel.innerHTML = "";
+    PLACES.forEach(([name], i) => {
+      const o = document.createElement("option");
+      o.value = String(i); o.textContent = name; sel.appendChild(o);
+    });
+    const geo = document.createElement("option");
+    geo.value = "geo"; geo.textContent = "My location";
+    sel.appendChild(geo);
+    const cur = currentPlace();
+    sel.value = PLACES.findIndex(p => p[0] === cur.name) >= 0
+      ? String(PLACES.findIndex(p => p[0] === cur.name)) : "geo";
+    sel.onchange = () => {
+      if (sel.value === "geo") {
+        if (!navigator.geolocation) { sel.value = "0"; return; }
+        navigator.geolocation.getCurrentPosition(pos => {
+          const p = { name: "My location", lat: pos.coords.latitude, lon: pos.coords.longitude,
+            tz: -new Date().getTimezoneOffset() };
+          localStorage.setItem(PLACE_KEY, JSON.stringify(p));
+          renderToday(lastShown);
+        }, () => { sel.value = "0"; }, { timeout: 8000 });
+      } else {
+        const [name, lat, lon, tz] = PLACES[+sel.value];
+        localStorage.setItem(PLACE_KEY, JSON.stringify({ name, lat, lon, tz }));
+        renderToday(lastShown);
+      }
+    };
+  }
+
+  function renderTimings(date) {
+    const box = document.getElementById("timings"), line = document.getElementById("tm-tithi");
+    if (!window.Panchang) { box.hidden = true; line.hidden = true; return; }
+    const p = currentPlace();
+    const [y, m, d] = date.split("-").map(Number);
+    const r = window.Panchang.day(y, m, d, p.lat, p.lon, p.tz);
+    const set = (id, v) => document.getElementById(id).textContent = v || "—";
+    if (r.sunrise && r.sunset) {
+      set("tm-sunrise", fmtT(r.sunrise, p.tz));
+      set("tm-sunset", fmtT(r.sunset, p.tz));
+      set("tm-rahu", span(r.rahu, p.tz));
+      set("tm-yama", span(r.yamaganda, p.tz));
+      set("tm-gulika", span(r.gulika, p.tz));
+      set("tm-abhijit", span(r.abhijit, p.tz));
+      box.hidden = false;
+    } else box.hidden = true;
+
+    const segs = r.tithis.filter(t => t.endsToday || t.began);
+    if (segs.length) {
+      line.hidden = false;
+      line.innerHTML = segs.map(t => {
+        const nm = `<b>${t.paksha} ${tithiLabel(t.paksha, t.num)}</b>`;
+        if (t.endsToday && t.began) return `${nm} ${fmtT(t.start, p.tz)}–${fmtT(t.end, p.tz)}`;
+        if (t.endsToday) return `${nm} until ${fmtT(t.end, p.tz)}`;
+        return `${nm} from ${fmtT(t.start, p.tz)}`;
+      }).join('<span class="sep">·</span>');
+    } else line.hidden = true;
+  }
+
+  /* ── search ──────────────────────────────────────────────── */
+  function initSearch() {
+    const input = document.getElementById("q");
+    let timer = null;
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => doSearch(input.value), 140);
+    });
+    document.getElementById("q-quick").addEventListener("click", e => {
+      const b = e.target.closest("[data-q]");
+      if (!b) return;
+      input.value = b.dataset.q;
+      doSearch(b.dataset.q);
+    });
+  }
+
+  function doSearch(raw) {
+    const ul = document.getElementById("q-results"), empty = document.getElementById("q-empty");
+    ul.innerHTML = "";
+    const nq = norm(raw);
+    if (nq.length < 2) { empty.hidden = true; return; }
+    const t = todayISO(), out = [];
+    for (const e of DATA.events || [])
+      if (e.date >= t && norm(e.title).includes(nq))
+        out.push({ date: e.date, title: e.title, kind: "Mat͟h day", meta: e.panchang });
+    for (const d of KEYS) {
+      if (d < t) continue;
+      const r = dayMap[d];
+      for (const o of r.observances || [])
+        if (norm(o).includes(nq))
+          out.push({ date: d, title: o, kind: "Observance", meta: `${r.paksha} ${r.tithi}` });
+      if (norm(r.tithi).includes(nq) || norm(`${r.paksha} ${r.tithi}`).includes(nq))
+        out.push({ date: d, title: `${r.paksha} ${r.tithi}`, kind: "Tithi", meta: `${r.masa} māsa` });
+    }
+    // if a date already matched as an observance, its tithi row is redundant
+    const obsDates = new Set(out.filter(x => x.kind === "Observance").map(x => x.date));
+    const seen = new Set(), res = [];
+    for (const x of out) {
+      if (x.kind === "Tithi" && obsDates.has(x.date)) continue;
+      const k = x.date + "|" + x.title;
+      if (seen.has(k)) continue;
+      seen.add(k); res.push(x);
+    }
+    res.sort((a, b) => a.date < b.date ? -1 : 1);
+    const capped = res.slice(0, 40);
+    empty.hidden = capped.length > 0;
+    capped.forEach(x => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span><span class="q-t">${esc(x.title)}</span>`
+        + `<span class="q-m">${esc(x.kind)}${x.meta ? " · " + esc(x.meta) : ""}</span></span>`
+        + `<span class="q-d">${prettyShort(x.date)}<span class="q-m">${inWords(daysBetween(t, x.date))}</span></span>`;
+      li.addEventListener("click", () => {
+        monthCursor = x.date.slice(0, 7);
+        renderMonth();
+        showDayDetail(x.date);
+        document.getElementById("day-detail").scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      ul.appendChild(li);
+    });
+  }
+
   /* ── controls ────────────────────────────────────────────── */
   function initControls() {
     let cursor = todayISO();
-    const step = n => { cursor = addDays(cursor, n); renderToday(cursor); };
+    lastShown = cursor;
+    const step = n => { cursor = addDays(cursor, n); lastShown = cursor; renderToday(cursor); };
     document.getElementById("prev-day").onclick = () => step(-1);
     document.getElementById("next-day").onclick = () => step(1);
-    document.getElementById("today-btn").onclick = () => { cursor = todayISO(); renderToday(cursor); };
+    document.getElementById("today-btn").onclick = () => { cursor = todayISO(); lastShown = cursor; renderToday(cursor); };
 
     document.getElementById("window-days").onchange = renderReminders;
 
