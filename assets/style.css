@@ -436,3 +436,14 @@ select:focus,input:focus{outline:none;border-color:var(--gold-2);
   html{scroll-behavior:auto}
   *{transition:none!important;animation:none!important}
 }
+
+/* ── search: past results ─────────────────────────────────── */
+.q-results li.q-sep{
+  display:block;cursor:default;padding:16px 0 6px;border-top:1px solid var(--line-2);
+  font-family:var(--sans);font-size:.62rem;font-weight:600;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--gold);
+}
+.q-results li.q-sep:hover{padding-left:0}
+.q-results li.q-past{opacity:.62}
+.q-results li.q-past:hover{opacity:1}
+.q-results li.q-past .q-d{color:var(--muted)}

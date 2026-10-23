@@ -28,6 +28,44 @@
     .normalize("NFD").replace(/[\u0300-\u036f\u0332\u035f]/g, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
+  // Common names → the wording the Mat͟h's almanac actually uses
+  const ALIASES = {
+    "diwali": ["lakshmi pujana", "naraka chaturdashi", "bali pujana"],
+    "deepavali": ["lakshmi pujana", "diwali"],
+    "holi": ["holika", "kamadahana"],
+    "ganesh": ["ganesha chaturthi", "ganesha"],
+    "ganesha": ["ganesha chaturthi"],
+    "vinayaka": ["ganesha chaturthi", "ganesha"],
+    "janmashtami": ["krishna janmashtami"],
+    "krishna janmashtami": ["janmashtami"],
+    "dussehra": ["vijayadashami"], "dasara": ["vijayadashami"], "dasera": ["vijayadashami"],
+    "navratri": ["navaratri", "navaratri prarambha"], "navaratri": ["navratri"],
+    "shivaratri": ["maha shivaratri"], "shivratri": ["maha shivaratri"],
+    "mahashivaratri": ["maha shivaratri"],
+    "ramanavami": ["rama navami"], "ram navami": ["ramanavami", "rama navami"],
+    "ramnavami": ["ramanavami"],
+    "rakhi": ["raksha bandhan", "shravana purnima"],
+    "raksha bandhan": ["rakhi", "shravana purnima"],
+    "guru purnima": ["vyasa pujana"], "vyasa purnima": ["guru purnima", "vyasa pujana"],
+    "akha teej": ["akshaya tritiya"],
+    "ugadi": ["yugadi", "chandramana yugadi"], "gudi padwa": ["yugadi"],
+    "yugadi": ["chandramana yugadi"],
+    "makar sankranti": ["makara sankramana"], "pongal": ["makara sankramana"],
+    "nag panchami": ["naga panchami"],
+    "anant chaturthi": ["ananta chaturdashi"],
+    "sharad purnima": ["kojagari"], "kojagari": ["kojagari purnima"],
+    "pradosha": ["pradosh"], "tulsi": ["tulasi pujana"], "tulasi": ["tulasi pujana"],
+  };
+
+  // every token of some candidate phrase must appear in the haystack
+  function makeMatcher(nq) {
+    const cands = new Set([nq]);
+    if (ALIASES[nq]) ALIASES[nq].forEach(x => cands.add(x));
+    nq.split(" ").forEach(tok => { if (ALIASES[tok]) ALIASES[tok].forEach(x => cands.add(x)); });
+    const phrases = [...cands].map(c => c.split(" ").filter(Boolean)).filter(p => p.length);
+    return hay => phrases.some(parts => parts.every(t => hay.includes(t)));
+  }
+
   let DATA = null, KEYS = [], dayMap = null;
 
   /* ── date helpers (all local-time) ───────────────────────── */
@@ -517,8 +555,11 @@
   }
 
   /* ── search ──────────────────────────────────────────────── */
+  let EMPTY_MSG = "";
+
   function initSearch() {
     const input = document.getElementById("q");
+    EMPTY_MSG = document.getElementById("q-empty").textContent.trim();
     let timer = null;
     input.addEventListener("input", () => {
       clearTimeout(timer);
@@ -537,44 +578,70 @@
     ul.innerHTML = "";
     const nq = norm(raw);
     if (nq.length < 2) { empty.hidden = true; return; }
-    const t = todayISO(), out = [];
-    for (const e of DATA.events || [])
-      if (e.date >= t && norm(e.title).includes(nq))
-        out.push({ date: e.date, title: e.title, kind: "Mat͟h day", meta: e.panchang });
+    const t = todayISO(), hit = makeMatcher(nq);
+    const future = [], past = [];
+
+    for (const e of DATA.events || []) {
+      if (!hit(norm(e.title))) continue;
+      const row = { date: e.date, title: e.title, kind: "Mat͟h day", meta: e.panchang };
+      (e.date >= t ? future : past).push(row);
+    }
     for (const d of KEYS) {
       if (d < t) continue;
       const r = dayMap[d];
       for (const o of r.observances || [])
-        if (norm(o).includes(nq))
-          out.push({ date: d, title: o, kind: "Observance", meta: `${r.paksha} ${r.tithi}` });
-      if (norm(r.tithi).includes(nq) || norm(`${r.paksha} ${r.tithi}`).includes(nq))
-        out.push({ date: d, title: `${r.paksha} ${r.tithi}`, kind: "Tithi", meta: `${r.masa} māsa` });
+        if (hit(norm(o))) future.push({ date: d, title: o, kind: "Observance", meta: `${r.paksha} ${r.tithi}` });
+      if (hit(norm(r.tithi)) || hit(norm(`${r.paksha} ${r.tithi}`)))
+        future.push({ date: d, title: `${r.paksha} ${r.tithi}`, kind: "Tithi", meta: `${r.masa} māsa` });
     }
-    // if a date already matched as an observance, its tithi row is redundant
-    const obsDates = new Set(out.filter(x => x.kind === "Observance").map(x => x.date));
-    const seen = new Set(), res = [];
-    for (const x of out) {
-      if (x.kind === "Tithi" && obsDates.has(x.date)) continue;
-      const k = x.date + "|" + x.title;
-      if (seen.has(k)) continue;
-      seen.add(k); res.push(x);
+
+    const obsDates = new Set(future.filter(x => x.kind === "Observance").map(x => x.date));
+    const dedupe = (rows) => {
+      const seen = new Set(), out = [];
+      for (const x of rows) {
+        if (x.kind === "Tithi" && obsDates.has(x.date)) continue;
+        const k = x.date + "|" + x.title;
+        if (seen.has(k)) continue;
+        seen.add(k); out.push(x);
+      }
+      return out;
+    };
+    const fut = dedupe(future).sort((a, b) => a.date < b.date ? -1 : 1).slice(0, 40);
+    const pst = dedupe(past).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 8);
+
+    if (!fut.length && !pst.length) {
+      empty.textContent = EMPTY_MSG;
+      empty.hidden = false;
+    } else if (!fut.length) {
+      empty.textContent = "No upcoming date has been published for this yet — the Mat͟h adds to its almanac through the year. The dates below are the most recent.";
+      empty.hidden = false;
+    } else {
+      empty.hidden = true;
     }
-    res.sort((a, b) => a.date < b.date ? -1 : 1);
-    const capped = res.slice(0, 40);
-    empty.hidden = capped.length > 0;
-    capped.forEach(x => {
-      const li = document.createElement("li");
-      li.innerHTML = `<span><span class="q-t">${esc(x.title)}</span>`
-        + `<span class="q-m">${esc(x.kind)}${x.meta ? " · " + esc(x.meta) : ""}</span></span>`
-        + `<span class="q-d">${prettyShort(x.date)}<span class="q-m">${inWords(daysBetween(t, x.date))}</span></span>`;
-      li.addEventListener("click", () => {
-        monthCursor = x.date.slice(0, 7);
-        renderMonth();
-        showDayDetail(x.date);
-        document.getElementById("day-detail").scrollIntoView({ behavior: "smooth", block: "center" });
-      });
-      ul.appendChild(li);
+    fut.forEach(x => ul.appendChild(resultRow(x, t, false)));
+    if (pst.length) {
+      const sep = document.createElement("li");
+      sep.className = "q-sep";
+      sep.textContent = "Earlier in the calendar";
+      ul.appendChild(sep);
+      pst.forEach(x => ul.appendChild(resultRow(x, t, true)));
+    }
+  }
+
+  function resultRow(x, t, isPast) {
+    const li = document.createElement("li");
+    if (isPast) li.className = "q-past";
+    li.innerHTML = `<span><span class="q-t">${esc(x.title)}</span>`
+      + `<span class="q-m">${esc(x.kind)}${x.meta ? " · " + esc(x.meta) : ""}</span></span>`
+      + `<span class="q-d">${prettyShort(x.date)}<span class="q-m">`
+      + (isPast ? "last observed" : inWords(daysBetween(t, x.date))) + `</span></span>`;
+    li.addEventListener("click", () => {
+      monthCursor = x.date.slice(0, 7);
+      renderMonth();
+      showDayDetail(x.date);
+      document.getElementById("day-detail").scrollIntoView({ behavior: "smooth", block: "center" });
     });
+    return li;
   }
 
   /* ── controls ────────────────────────────────────────────── */

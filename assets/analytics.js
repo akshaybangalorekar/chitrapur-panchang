@@ -14,7 +14,7 @@
  * you users / sessions / page views, but it cannot give you a raw unique-IP
  * count — that needs a server-side counter (see README).
  */
-window.GA_MEASUREMENT_ID = "";   // <-- paste your G-XXXXXXXXXX here
+window.GA_MEASUREMENT_ID = "G-M7WVZYJLZ3";
 
 (function () {
   "use strict";
