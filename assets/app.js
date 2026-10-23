@@ -18,7 +18,8 @@
     ["Kolkata", 22.5726, 88.3639, IST], ["Chennai", 13.0827, 80.2707, IST],
     ["Hyderabad", 17.3850, 78.4867, IST], ["Pune", 18.5204, 73.8567, IST],
     ["Mangaluru", 12.9141, 74.8560, IST],
-    ["Melbourne", -37.8136, 144.9631, "Australia/Melbourne"]];
+    ["Melbourne", -37.8136, 144.9631, "Australia/Melbourne"],
+    ["Boston", 42.3601, -71.0589, "America/New_York"]];
   const TRANSLIT = { "ṛ": "ri", "ṣ": "sh", "ś": "sh", "ṭ": "t", "ḍ": "d", "ṇ": "n",
     "ṃ": "m", "ṅ": "n", "ñ": "n", "ā": "a", "ī": "i", "ū": "u", "ḥ": "h",
     "ṁ": "m", "ḷ": "l" };
