@@ -59,6 +59,27 @@ No third-party packages are needed — only the Python standard library.
 to `data/panchang.json`, so the site always carries the latest published calendar.
 Run it by hand from the **Actions** tab any time.
 
+## Visitor analytics (optional)
+
+`assets/analytics.js` is set up for Google Analytics 4 but is **switched off by
+default** — with no Measurement ID it loads nothing and sets no cookies. To turn
+it on, create a GA4 property and web data stream for the Pages URL, then paste
+the `G-XXXXXXXXXX` ID into `window.GA_MEASUREMENT_ID` at the top of that file.
+
+GA4 reports **users, sessions and page views**. It does not log or store IP
+addresses (it uses them transiently for coarse location, then discards them), so
+it cannot give you a unique-IP count.
+
+For that you need a server-side counter, because GitHub Pages is static hosting
+with no request logs. The workable approach is a small Cloudflare Worker that
+hashes the visitor IP with a rotating daily salt and increments a counter in KV —
+counting uniques without ever storing an address. Note that an IP address is
+personal data under India's DPDP Act and, for EU visitors, GDPR; a salted hash
+with short retention is the defensible way to do it.
+
+If you serve EU visitors, GA4 sets cookies and needs consent — consider a consent
+banner or a cookieless service such as GoatCounter or Plausible instead.
+
 ## Hosting
 
 Served by GitHub Pages from the `main` branch root. To use your own copy, fork the
