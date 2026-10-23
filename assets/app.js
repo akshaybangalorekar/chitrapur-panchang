@@ -11,12 +11,14 @@
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
   const PLACE_KEY = "chitrapur.place.v1";
+  const IST = "Asia/Kolkata";
   const PLACES = [
-    ["Shirali", 13.9953, 74.7178, 330], ["Bengaluru", 12.9716, 77.5946, 330],
-    ["Mumbai", 19.0760, 72.8777, 330], ["Delhi", 28.6139, 77.2090, 330],
-    ["Kolkata", 22.5726, 88.3639, 330], ["Chennai", 13.0827, 80.2707, 330],
-    ["Hyderabad", 17.3850, 78.4867, 330], ["Pune", 18.5204, 73.8567, 330],
-    ["Mangaluru", 12.9141, 74.8560, 330]];
+    ["Shirali", 13.9953, 74.7178, IST], ["Bengaluru", 12.9716, 77.5946, IST],
+    ["Mumbai", 19.0760, 72.8777, IST], ["Delhi", 28.6139, 77.2090, IST],
+    ["Kolkata", 22.5726, 88.3639, IST], ["Chennai", 13.0827, 80.2707, IST],
+    ["Hyderabad", 17.3850, 78.4867, IST], ["Pune", 18.5204, 73.8567, IST],
+    ["Mangaluru", 12.9141, 74.8560, IST],
+    ["Melbourne", -37.8136, 144.9631, "Australia/Melbourne"]];
   const TRANSLIT = { "ṛ": "ri", "ṣ": "sh", "ś": "sh", "ṭ": "t", "ḍ": "d", "ṇ": "n",
     "ṃ": "m", "ṅ": "n", "ñ": "n", "ā": "a", "ī": "i", "ū": "u", "ḥ": "h",
     "ṁ": "m", "ḷ": "l" };
@@ -410,9 +412,25 @@
       const p = JSON.parse(localStorage.getItem(PLACE_KEY));
       if (p && p.lat != null) return p;
     } catch { /* ignore */ }
-    const [name, lat, lon, tz] = PLACES[0];
-    return { name, lat, lon, tz };
+    const [name, lat, lon, tzName] = PLACES[0];
+    return { name, lat, lon, tzName };
   }
+
+  // UTC offset in minutes for an IANA zone at a given instant (handles DST)
+  function offsetMinutes(tzName, date) {
+    try {
+      const dtf = new Intl.DateTimeFormat("en-US", {
+        timeZone: tzName, hour12: false, year: "numeric", month: "2-digit",
+        day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit",
+      });
+      const o = {};
+      for (const part of dtf.formatToParts(date)) o[part.type] = part.value;
+      const asUTC = Date.UTC(+o.year, +o.month - 1, +o.day, +o.hour % 24, +o.minute, +o.second);
+      return Math.round((asUTC - Math.round(date.getTime() / 1000) * 1000) / 60000);
+    } catch { return 0; }
+  }
+  const placeOffset = (p, date) => p.tzName ? offsetMinutes(p.tzName, date)
+    : (p.tz != null ? p.tz : 0);
   const fmtT = (d, tz) => {
     if (!d) return "—";
     const t = new Date(d.getTime() + tz * 60000);
@@ -439,13 +457,13 @@
         if (!navigator.geolocation) { sel.value = "0"; return; }
         navigator.geolocation.getCurrentPosition(pos => {
           const p = { name: "My location", lat: pos.coords.latitude, lon: pos.coords.longitude,
-            tz: -new Date().getTimezoneOffset() };
+            tzName: Intl.DateTimeFormat().resolvedOptions().timeZone };
           localStorage.setItem(PLACE_KEY, JSON.stringify(p));
           renderToday(lastShown);
         }, () => { sel.value = "0"; }, { timeout: 8000 });
       } else {
-        const [name, lat, lon, tz] = PLACES[+sel.value];
-        localStorage.setItem(PLACE_KEY, JSON.stringify({ name, lat, lon, tz }));
+        const [name, lat, lon, tzName] = PLACES[+sel.value];
+        localStorage.setItem(PLACE_KEY, JSON.stringify({ name, lat, lon, tzName }));
         renderToday(lastShown);
       }
     };
@@ -456,15 +474,16 @@
     if (!window.Panchang) { box.hidden = true; line.hidden = true; return; }
     const p = currentPlace();
     const [y, m, d] = date.split("-").map(Number);
-    const r = window.Panchang.day(y, m, d, p.lat, p.lon, p.tz);
+    const tz = placeOffset(p, new Date(Date.UTC(y, m - 1, d, 12)));
+    const r = window.Panchang.day(y, m, d, p.lat, p.lon, tz);
     const set = (id, v) => document.getElementById(id).textContent = v || "—";
     if (r.sunrise && r.sunset) {
-      set("tm-sunrise", fmtT(r.sunrise, p.tz));
-      set("tm-sunset", fmtT(r.sunset, p.tz));
-      set("tm-rahu", span(r.rahu, p.tz));
-      set("tm-yama", span(r.yamaganda, p.tz));
-      set("tm-gulika", span(r.gulika, p.tz));
-      set("tm-abhijit", span(r.abhijit, p.tz));
+      set("tm-sunrise", fmtT(r.sunrise, tz));
+      set("tm-sunset", fmtT(r.sunset, tz));
+      set("tm-rahu", span(r.rahu, tz));
+      set("tm-yama", span(r.yamaganda, tz));
+      set("tm-gulika", span(r.gulika, tz));
+      set("tm-abhijit", span(r.abhijit, tz));
       box.hidden = false;
     } else box.hidden = true;
 
@@ -473,9 +492,9 @@
       line.hidden = false;
       line.innerHTML = segs.map(t => {
         const nm = `<b>${t.paksha} ${tithiLabel(t.paksha, t.num)}</b>`;
-        if (t.endsToday && t.began) return `${nm} ${fmtT(t.start, p.tz)}–${fmtT(t.end, p.tz)}`;
-        if (t.endsToday) return `${nm} until ${fmtT(t.end, p.tz)}`;
-        return `${nm} from ${fmtT(t.start, p.tz)}`;
+        if (t.endsToday && t.began) return `${nm} ${fmtT(t.start, tz)}–${fmtT(t.end, tz)}`;
+        if (t.endsToday) return `${nm} until ${fmtT(t.end, tz)}`;
+        return `${nm} from ${fmtT(t.start, tz)}`;
       }).join('<span class="sep">·</span>');
     } else line.hidden = true;
   }

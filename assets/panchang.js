@@ -91,7 +91,7 @@
   function dayOfYear(y, m, d) {
     return Math.floor((Date.UTC(y, m - 1, d) - Date.UTC(y, 0, 1)) / 86400000) + 1;
   }
-  function sunEvent(y, m, d, lat, lon, rising) {
+  function sunEvent(y, m, d, lat, lon, rising, tzMin) {
     const N = dayOfYear(y, m, d), lngHour = lon / 15;
     const t = N + ((rising ? 6 : 18) - lngHour) / 24;
     const M = 0.9856 * t - 3.289;
@@ -104,7 +104,15 @@
     if (cosH > 1 || cosH < -1) return null;
     let H = (rising ? 360 - Math.acos(cosH) * R2D : Math.acos(cosH) * R2D) / 15;
     let UT = ((H + RA - 0.06571 * t - 6.622 - lngHour) % 24 + 24) % 24;
-    return new Date(Date.UTC(y, m - 1, d) + UT * 3600000);
+    let ms = Date.UTC(y, m - 1, d) + UT * 3600000;
+    // UT can fall on the neighbouring UTC day for eastern/western longitudes;
+    // shift by whole days so the event lands on the intended local civil date.
+    const off = (tzMin || 0) * 60000;
+    const dayMs = 86400000;
+    const targetDay = Math.floor((Date.UTC(y, m - 1, d) + off) / dayMs) * dayMs;
+    const gotDay = Math.floor((ms + off) / dayMs) * dayMs;
+    ms += targetDay - gotDay;
+    return new Date(ms);
   }
 
   // order of the 8 day-parts (1-based) ruled by Rāhu / Yama / Gulika
@@ -120,8 +128,8 @@
   /* ── public: everything for one civil day at a place ─────── */
   function day(y, m, d, lat, lon, tzMin) {
     tzMin = tzMin || 0;
-    const sunrise = sunEvent(y, m, d, lat, lon, true);
-    const sunset = sunEvent(y, m, d, lat, lon, false);
+    const sunrise = sunEvent(y, m, d, lat, lon, true, tzMin);
+    const sunset = sunEvent(y, m, d, lat, lon, false, tzMin);
     const res = { sunrise, sunset, rahu: null, yamaganda: null, gulika: null, abhijit: null, tithis: [] };
     if (sunrise && sunset) {
       const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
