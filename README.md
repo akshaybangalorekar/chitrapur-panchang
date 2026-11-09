@@ -94,7 +94,7 @@ and it works offline once loaded.
 - **Android / Chrome** — open it, tap the menu, then **Install app** (or *Add to Home screen*).
 - **Desktop** — use the install icon in the address bar.
 
-This is powered by `manifest.webmanifest` (standalone display, name, icons) and
+This is powered by `manifest.json` (standalone display, name, icons) and
 `sw.js` (a service worker that caches the app shell; page loads and
 `data/panchang.json` go network-first so updates still show, with the cached copy as
 an offline fallback).
