@@ -135,6 +135,8 @@ h2.eyebrow{
 .header-date span{display:block;font-size:.62rem;font-weight:600;letter-spacing:.22em;
   text-transform:uppercase;color:var(--muted)}
 .header-date strong{font-family:var(--serif);font-size:1.12rem;font-weight:500;color:var(--ink)}
+.hd-clock{font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:.1em;
+  color:var(--accent-2);font-variant-numeric:tabular-nums;margin-top:3px}
 .icon-round{
   width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;
   background:var(--surface-solid);border:1px solid var(--line);box-shadow:var(--shadow-1);
@@ -187,7 +189,19 @@ main{padding:38px 0 10px;display:grid;gap:22px}
 .today-head{display:flex;align-items:center;justify-content:space-between;gap:14px;
   flex-wrap:wrap;margin-bottom:24px}
 .today-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.today-main{display:grid;grid-template-columns:1.12fr 1fr;gap:38px;align-items:center}
+.today-main{display:block}
+
+/* ── pañchāṅga top strip ──────────────────────────────────── */
+.top-strip{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 22px}
+.top-strip>div{
+  flex:1 1 96px;min-width:96px;padding:10px 13px;border-radius:var(--r-md);
+  border:1px solid var(--line);background:var(--tint);
+}
+.top-strip .ts-k{display:block;font-size:.58rem;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted)}
+.top-strip .ts-v{display:block;margin-top:3px;font-family:var(--serif);
+  font-size:1.05rem;font-weight:500;color:var(--ink)}
+.top-strip .ts-v.krishna{color:var(--krishna)}
 .tithi-big h3{
   font-size:clamp(2.2rem,4.8vw,3.3rem);line-height:1;font-weight:400;
   margin:12px 0 6px;letter-spacing:-.028em;
@@ -550,9 +564,11 @@ button,select,input,summary,a{touch-action:manipulation}
   .accent-bar{position:absolute}
 }
 
-/* phone: the date is already shown in the today card */
+/* phone: the date is already shown in the today card — keep just the clock */
 @media (max-width:560px){
-  .header-date{display:none}
+  .header-date{display:block;text-align:right}
+  .header-date>span,.header-date>strong{display:none}
+  .hd-clock{margin-top:0;font-size:.9rem}
   .header-inner{padding:12px 0}
 }
 

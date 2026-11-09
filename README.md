@@ -85,6 +85,23 @@ banner or a cookieless service such as GoatCounter or Plausible instead.
 Served by GitHub Pages from the `main` branch root. To use your own copy, fork the
 repo and enable Pages under **Settings → Pages**.
 
+## Installing it as an app
+
+The site is a small PWA, so it can open on its own — full screen, no browser bars —
+and it works offline once loaded.
+
+- **iPhone / iPad** — open it in Safari, tap Share, then **Add to Home Screen**.
+- **Android / Chrome** — open it, tap the menu, then **Install app** (or *Add to Home screen*).
+- **Desktop** — use the install icon in the address bar.
+
+This is powered by `manifest.webmanifest` (standalone display, name, icons) and
+`sw.js` (a service worker that caches the app shell; page loads and
+`data/panchang.json` go network-first so updates still show, with the cached copy as
+an offline fallback).
+
+> **When you change the app, bump `CACHE` in `sw.js`** (e.g. `chitrapur-panchang-v1` →
+> `-v2`). That clears the old cached shell so everyone picks up the new version.
+
 ## A note
 
 This is a convenience companion to the Math's own calendar, not a substitute. For

@@ -131,6 +131,15 @@
     const t = new Date();
     document.getElementById("hd-weekday").textContent = DOW[t.getDay()];
     document.getElementById("hd-date").textContent = `${t.getDate()} ${MONTHS[t.getMonth()]} ${t.getFullYear()}`;
+
+    // live clock, always 24-hour
+    const clock = document.getElementById("hd-clock");
+    const paintClock = () => {
+      const n = new Date();
+      clock.textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+    };
+    paintClock();
+    setInterval(paintClock, 15000);
   }
 
   /* ── today card ──────────────────────────────────────────── */
@@ -141,16 +150,21 @@
     document.getElementById("t-date").textContent =
       prettyDate(date) + (date === todayISO() ? " · today" : "");
 
+    // vāra (weekday) of the day being shown
+    const vaar = DOW[new Date(date + "T12:00:00").getDay()];
+
     if (!r) {
       set("t-tithi", "Not in the calendar data");
+      set("t-vaar", vaar);
       ["t-paksha", "t-masa", "t-ritu", "t-nak", "t-samvatsara"].forEach(i => set(i, "—"));
       document.getElementById("t-obs").innerHTML = "";
       document.getElementById("t-alt").hidden = true;
       return;
     }
-    const chip = document.getElementById("t-paksha");
-    chip.textContent = r.paksha + " paksha";
-    chip.className = "paksha-chip" + (r.paksha === "Krishna" ? " krishna" : "");
+    set("t-vaar", vaar);
+    const pkEl = document.getElementById("t-paksha");
+    pkEl.textContent = r.paksha;
+    pkEl.className = "ts-v" + (r.paksha === "Krishna" ? " krishna" : "");
     const names = [...new Set(dayTithis(r).map(([pk, n]) => tithiLabel(pk, n)))];
     set("t-tithi", names.join(" / "));
     set("t-masa", r.masa);

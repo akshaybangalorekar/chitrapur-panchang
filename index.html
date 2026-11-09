@@ -6,6 +6,12 @@
 <title>Shrī Chitrāpur Mat͟h · Pañchāṅga</title>
 <meta name="description" content="Daily tithi, upcoming observances and Hindu-calendar birthdays, from the Shri Chitrapur Math calendar.">
 <meta name="theme-color" content="#6b2320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pañchāṅga">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet">
@@ -36,6 +42,7 @@
       <div class="header-date">
         <span id="hd-weekday">—</span>
         <strong id="hd-date">—</strong>
+        <div class="hd-clock" id="hd-clock">--:--</div>
       </div>
       <button id="theme-toggle" class="icon-round" type="button" title="Switch theme" aria-label="Switch between light and dark">
         <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g class="rays"><path d="M12 2.4v2.6M12 19v2.6M2.4 12h2.6M19 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
@@ -65,19 +72,20 @@
       </div>
     </div>
 
+    <div class="top-strip">
+      <div><span class="ts-k">Vāra</span><span class="ts-v" id="t-vaar">—</span></div>
+      <div><span class="ts-k">Māsa</span><span class="ts-v" id="t-masa">—</span></div>
+      <div><span class="ts-k">Paksha</span><span class="ts-v" id="t-paksha">—</span></div>
+      <div><span class="ts-k">Ṛtu</span><span class="ts-v" id="t-ritu">—</span></div>
+      <div><span class="ts-k">Saṁvatsara</span><span class="ts-v" id="t-samvatsara">—</span></div>
+      <div><span class="ts-k">Nakshatra</span><span class="ts-v" id="t-nak">—</span></div>
+    </div>
     <div class="today-main">
       <div class="tithi-big">
-        <span id="t-paksha" class="paksha-chip">—</span>
         <h3 id="t-tithi">—</h3>
         <p id="t-alt" class="tithi-alt" hidden></p>
         <div id="t-obs" class="chips"></div>
       </div>
-      <dl class="panchanga-grid">
-        <div><dt>Māsa</dt><dd id="t-masa">—</dd></div>
-        <div><dt>Ṛtu</dt><dd id="t-ritu">—</dd></div>
-        <div><dt>Nakshatra</dt><dd id="t-nak">—</dd></div>
-        <div><dt>Saṁvatsara</dt><dd id="t-samvatsara">—</dd></div>
-      </dl>
     </div>
     <div class="timings" id="timings" hidden>
       <div class="t-item"><span class="t-k">Sunrise</span><span class="t-v" id="tm-sunrise">—</span></div>
@@ -268,5 +276,12 @@
 <script src="assets/analytics.js"></script>
 <script src="assets/panchang.js"></script>
 <script src="assets/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () { /* offline install is optional */ });
+    });
+  }
+</script>
 </body>
 </html>
