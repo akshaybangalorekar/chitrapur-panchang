@@ -192,16 +192,17 @@ main{padding:38px 0 10px;display:grid;gap:22px}
 .today-main{display:block}
 
 /* ── pañchāṅga top strip ──────────────────────────────────── */
-.top-strip{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 22px}
-.top-strip>div{
-  flex:1 1 96px;min-width:96px;padding:10px 13px;border-radius:var(--r-md);
-  border:1px solid var(--line);background:var(--tint);
-}
-.top-strip .ts-k{display:block;font-size:.58rem;font-weight:600;letter-spacing:.18em;
+.top-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));
+  gap:8px;margin:2px 0 22px}
+.top-strip>div{padding:10px 12px;border-radius:var(--r-md);
+  border:1px solid var(--line);background:var(--tint);min-width:0}
+.top-strip .ts-k{display:block;font-size:.58rem;font-weight:600;letter-spacing:.16em;
   text-transform:uppercase;color:var(--muted)}
 .top-strip .ts-v{display:block;margin-top:3px;font-family:var(--serif);
-  font-size:1.05rem;font-weight:500;color:var(--ink)}
+  font-size:.92rem;line-height:1.2;font-weight:500;color:var(--ink);
+  white-space:nowrap}
 .top-strip .ts-v.krishna{color:var(--krishna)}
+@media (min-width:900px){ .top-strip{grid-template-columns:repeat(8,1fr)} }
 .tithi-big h3{
   font-size:clamp(2.2rem,4.8vw,3.3rem);line-height:1;font-weight:400;
   margin:12px 0 6px;letter-spacing:-.028em;

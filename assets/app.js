@@ -124,6 +124,22 @@
 
   function rec(date) { return dayMap[date] || null; }
 
+  // ── ayana (Uttarāyaṇa / Dakṣiṇāyana) ──────────────────────
+  // Sidereal solar longitude; Uttarāyaṇa runs while the sun is in
+  // Makara…Mithuna (270°–360° and 0°–90°), else Dakṣiṇāyana.
+  function siderealSunLongitude(date) {
+    const n = (date.getTime() - Date.UTC(2000, 0, 1, 12)) / 86400000;
+    const L = 280.460 + 0.9856474 * n;
+    const g = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
+    const tropical = L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g);
+    const ayanamsa = 23.85 + 0.0139 * (date.getUTCFullYear() - 2000); // Lahiri, approx.
+    return ((tropical - ayanamsa) % 360 + 360) % 360;
+  }
+  function ayanaFor(iso) {
+    const lam = siderealSunLongitude(new Date(iso + "T06:00:00Z"));
+    return (lam >= 270 || lam < 90) ? "Uttarāyaṇa" : "Dakṣiṇāyana";
+  }
+
   function eventsOn(date) { return (DATA.events || []).filter(e => e.date === date); }
 
   /* ── header ──────────────────────────────────────────────── */
@@ -150,23 +166,28 @@
     document.getElementById("t-date").textContent =
       prettyDate(date) + (date === todayISO() ? " · today" : "");
 
-    // vāra (weekday) of the day being shown
+    // vāra (weekday) and ayana (sun's northward / southward half) of the day shown
     const vaar = DOW[new Date(date + "T12:00:00").getDay()];
+    const ayana = ayanaFor(date);
 
     if (!r) {
       set("t-tithi", "Not in the calendar data");
+      set("t-tithi-s", "—");
       set("t-vaar", vaar);
+      set("t-ayana", ayana);
       ["t-paksha", "t-masa", "t-ritu", "t-nak", "t-samvatsara"].forEach(i => set(i, "—"));
       document.getElementById("t-obs").innerHTML = "";
       document.getElementById("t-alt").hidden = true;
       return;
     }
     set("t-vaar", vaar);
+    set("t-ayana", ayana);
     const pkEl = document.getElementById("t-paksha");
     pkEl.textContent = r.paksha;
     pkEl.className = "ts-v" + (r.paksha === "Krishna" ? " krishna" : "");
     const names = [...new Set(dayTithis(r).map(([pk, n]) => tithiLabel(pk, n)))];
     set("t-tithi", names.join(" / "));
+    set("t-tithi-s", names.join(" / "));
     set("t-masa", r.masa);
     set("t-ritu", r.ritu);
     set("t-nak", r.nakshatra);
