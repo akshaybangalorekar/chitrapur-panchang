@@ -197,24 +197,22 @@ const SV_SECTIONS = [
    {
     "t": "instr",
     "v": "(Pour one spoon of water over the right palm into the plate after reciting the following mantra-s.)"
-   }
-  ]
- },
- {
-  "title": "(prātaḥ sandhyāvandanam)",
-  "dev": "(प्रातः सन्ध्यावन्दनम्)",
-  "blocks": [
+   },
+   {
+    "t": "sub",
+    "dev": "(प्रातः सन्ध्यावन्दनम्)",
+    "iast": "(Prātaḥ Sandhyāvandanam)"
+   },
    {
     "t": "mantra",
     "dev": "श्रीमद्भगवतो महापुरुषस्य विष्णोराज्ञया प्रवर्तमाने, अद्यास्मिन्ब्रह्माण्डे, भूलोके, जम्बुद्वीपे भरतखण्डे, भारतवर्षे, मेरोर्दक्षिणदिग्भागे, ब्रह्मणोऽस्य द्वितीयपरार्धे, श्रीश्वेतवराहकल्पे, वैवस्वतमन्वन्तरे, अष्टाविंशतितमे, युगचतुष्के, अत्र कलियुगे, प्रथमचरणे, बौद्धावतारे, शालिवाहनशके, वर्तमाने ---- संवत्सरे, उत्तरायणे / दक्षिणायने, ----ऋतौ, ------ मासे, ----पक्षे, ----तिथौ, ---- वासरे एवं गुणविशेषण-विशिष्टायां शुभतिथौ ममोपात्त-दुरितक्षयद्वारा श्रीपरमेश्वर प्रीत्यर्थं प्रातःकाल-सन्ध्यामुपासिष्ये । इति सङ्कल्प्य ।",
     "iast": "śrīmadbhagavato mahāpuruṣasya viṣṇorājñayā pravartamāne, adyāsminbrahmāṇḍe, bhūloke, jambudvīpe bharatakhaṇḍe, bhāratavarṣe, merordakṣiṇadigbhāge, brahmaṇo'sya dvitīyaparārdhe, śrīśvetavarāhakalpe, vaivasvatamanvantare, aṣṭāviṃśatitame, yugacatuṣke, atra kaliyuge, prathamacaraṇe, bauddhāvatāre, śālivāhanaśake, vartamāne ---- saṃvatsare, uttarāyaṇe / dakṣiṇāyane, ----ṛtau, ------ māse, ----pakṣe, ----tithau, ---- vāsare evaṃ guṇaviśeṣaṇa-viśiṣṭāyāṃ śubhatithau mamopātta-duritakṣayadvārā śrīparameśvara prītyarthaṃ prātaḥkāla-sandhyāmupāsiṣye | iti saṅkalpya |"
-   }
-  ]
- },
- {
-  "title": "(sāyaṃ sandhyāvandanam)",
-  "dev": "(सायं सन्ध्यावन्दनम्)",
-  "blocks": [
+   },
+   {
+    "t": "sub",
+    "dev": "(सायं सन्ध्यावन्दनम्)",
+    "iast": "(Sāyaṃ Sandhyāvandanam)"
+   },
    {
     "t": "mantra",
     "dev": "श्रीमद्भगवतो महापुरुषस्य विष्णोराज्ञया प्रवर्तमाने, अद्यास्मिन्ब्रह्माण्डे, भूलोके, जम्बुद्वीपे भरतखण्डे, भारतवर्षे, मेरोर्दक्षिणदिग्भागे, ब्रह्मणोऽस्य द्वितीयपरार्धे, श्रीश्वेतवराहकल्पे, वैवस्वतमन्वन्तरे, अष्टाविंशतितमे, युगचतुष्के, अत्र कलियुगे, प्रथमचरणे, बौद्धावतारे, शालिवाहनशके, वर्तमाने ----",

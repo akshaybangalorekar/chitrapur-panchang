@@ -55,18 +55,21 @@
   <section class="card sv-intro">
     <div class="card-head">
       <div class="card-head-title">
-        <h2 class="eyebrow">How to use this</h2>
-        <p class="card-note">Work down the list, one step at a time. Choose the script you read most easily.</p>
+        <h2 class="eyebrow">Read mode</h2>
+        <p class="card-note">One step filling the whole screen — no scrolling. Tap the big buttons to move on.</p>
       </div>
       <div class="card-head-tools">
-        <div class="script-toggle" role="group" aria-label="Script">
-          <button type="button" data-script="dev">देवनागरी</button>
-          <button type="button" data-script="both" class="on">Both</button>
-          <button type="button" data-script="iast">Roman</button>
-        </div>
+        <button type="button" class="primary read-start" id="read-start">Start reading ▸</button>
       </div>
     </div>
-    <p class="muted small sv-tip">Tap any step to open it. Text in <em>italics inside brackets</em> is the instruction for that step — what to do with your hands and the water.</p>
+    <div class="sv-intro-row">
+      <div class="script-toggle" role="group" aria-label="Script">
+        <button type="button" data-script="dev">देवनागरी</button>
+        <button type="button" data-script="both" class="on">Both</button>
+        <button type="button" data-script="iast">Roman</button>
+      </div>
+      <span class="muted small">The step list below is still here if you want to jump around.</span>
+    </div>
   </section>
 
   <nav class="card sv-index" aria-label="Steps">
@@ -97,7 +100,7 @@
     Transcribed from <em>Saṅkshipta Sandhyāvandanam — Tṛtīya Āvṛttih</em>, published by
     Shrī Chitrāpur Mat͟h, Shirāḷi (2nd edition 2016), and reproduced here as the Mat͟h
     distributes it freely. The roman text is a transliteration of the Devanagari.
-    For ritual use, please follow your own guru-paramparā and the printed booklet.
+    For ritual use, please follow your own guru-parampara and the printed booklet.
   </p>
 </main>
 
@@ -109,12 +112,60 @@
   </div>
 </footer>
 
+<!-- ── full-screen read mode ─────────────────────────────── -->
+<div class="rd" id="rd" hidden>
+  <div class="rd-bar">
+    <button type="button" class="rd-x" id="rd-close" aria-label="Close read mode">✕</button>
+    <span class="rd-count" id="rd-count">1 / 19</span>
+    <span class="rd-title" id="rd-title">—</span>
+    <div class="rd-scripts">
+      <button type="button" data-script="dev" aria-label="Devanagari only">अ</button>
+      <button type="button" data-script="both" class="on" aria-label="Both scripts">अA</button>
+      <button type="button" data-script="iast" aria-label="Roman only">A</button>
+    </div>
+  </div>
+  <div class="rd-body" id="rd-body">
+    <div class="rd-col" id="rd-c1"></div>
+    <div class="rd-col" id="rd-c2"></div>
+    <div class="rd-col" id="rd-c3"></div>
+  </div>
+  <div class="rd-nav">
+    <button type="button" id="rd-prev">‹ Back</button>
+    <button type="button" id="rd-next" class="next">Next ›</button>
+  </div>
+</div>
+
 <script src="assets/sandhyavandanam.js"></script>
 <script>
 (function () {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  /* ── the sequence ─────────────────────────────────────── */
+  const rd = document.getElementById("rd");
+
+  /* ── build one block element ──────────────────────────── */
+  function blockEl(b) {
+    if (b.t === "mantra") {
+      const d = document.createElement("div");
+      d.className = "sv-m";
+      d.innerHTML = (b.variant ? '<span class="sv-var">' + esc(b.variant) + "</span>" : "") +
+        '<p class="sv-dev">' + esc(b.dev) + "</p>" +
+        '<p class="sv-iast">' + esc(b.iast) + "</p>";
+      return d;
+    }
+    if (b.t === "instr") {
+      const p = document.createElement("p");
+      p.className = "sv-instr";
+      p.textContent = b.v;
+      return p;
+    }
+    const p = document.createElement("p");
+    p.className = "sv-sub";
+    p.innerHTML = '<span class="sv-dev">' + esc(b.dev) + "</span>" +
+      '<span class="sv-iast">' + esc(b.iast) + "</span>";
+    return p;
+  }
+
+  /* ── the list view ────────────────────────────────────── */
   const body = document.getElementById("sv-body");
   const index = document.getElementById("sv-index-list");
 
@@ -123,36 +174,16 @@
     const det = document.createElement("details");
     det.className = "card sv-sec";
     det.id = "sv-" + i;
-    if (i === 0) det.open = true;
 
     const sum = document.createElement("summary");
     sum.className = "sv-sum";
-    sum.innerHTML =
-      '<span class="sv-n">' + n + "</span>" +
-      '<span class="sv-ttl"><span class="sv-t">' + esc(sec.title) + "</span>" +
-      (sec.dev && sec.title !== sec.dev.replace(/॥/g, "").trim()
-        ? '<span class="sv-d">' + esc(sec.dev) + "</span>" : "") +
-      "</span>";
+    sum.innerHTML = '<span class="sv-n">' + n + "</span>" +
+      '<span class="sv-ttl"><span class="sv-t">' + esc(sec.title) + "</span></span>";
     det.appendChild(sum);
 
     const inner = document.createElement("div");
     inner.className = "sv-body-in";
-    sec.blocks.forEach(b => {
-      if (b.t === "mantra") {
-        inner.insertAdjacentHTML("beforeend",
-          '<div class="sv-m">' +
-          (b.variant ? '<span class="sv-var">' + esc(b.variant) + "</span>" : "") +
-          '<p class="sv-dev">' + esc(b.dev) + "</p>" +
-          '<p class="sv-iast">' + esc(b.iast) + "</p>" +
-          "</div>");
-      } else if (b.t === "instr") {
-        inner.insertAdjacentHTML("beforeend", '<p class="sv-instr">' + esc(b.v) + "</p>");
-      } else {
-        inner.insertAdjacentHTML("beforeend",
-          '<p class="sv-sub"><span class="sv-dev">' + esc(b.dev) + "</span>" +
-          '<span class="sv-iast">' + esc(b.iast) + "</span></p>");
-      }
-    });
+    sec.blocks.forEach(b => inner.appendChild(blockEl(b)));
     det.appendChild(inner);
     body.appendChild(det);
 
@@ -171,18 +202,20 @@
     .map((t, i) => "<li><span class='sv-n'>" + (i + 1) + "</span>" + esc(t) + "</li>").join("");
 
   /* ── script toggle ────────────────────────────────────── */
-  const btns = document.querySelectorAll(".script-toggle button");
   function paintScript(mode) {
     document.documentElement.dataset.script = mode;
     document.body.dataset.script = mode;
-    btns.forEach(b => b.classList.toggle("on", b.dataset.script === mode));
+    document.querySelectorAll(".script-toggle button, .rd-scripts button")
+      .forEach(b => b.classList.toggle("on", b.dataset.script === mode));
     try { localStorage.setItem("chitrapur.script", mode); } catch (e) {}
+    if (!rd.hidden) fit();
   }
-  const saved = (() => { try { return localStorage.getItem("chitrapur.script"); } catch (e) { return null; } })();
-  paintScript(saved === "dev" || saved === "iast" ? saved : "both");
-  btns.forEach(b => b.addEventListener("click", () => paintScript(b.dataset.script)));
+  document.querySelectorAll(".script-toggle button, .rd-scripts button")
+    .forEach(b => b.addEventListener("click", () => paintScript(b.dataset.script)));
+  const savedScript = (() => { try { return localStorage.getItem("chitrapur.script"); } catch (e) { return null; } })();
+  paintScript(savedScript === "dev" || savedScript === "iast" ? savedScript : "both");
 
-  /* ── theme toggle ─────────────────────────────────────── */
+  /* ── theme ────────────────────────────────────────────── */
   const tb = document.getElementById("theme-toggle");
   if (tb) tb.addEventListener("click", () => {
     const cur = document.documentElement.dataset.theme ||
@@ -190,6 +223,137 @@
     const next = cur === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem("chitrapur.theme", next); } catch (e) {}
+  });
+
+  /* ── read mode: one step per screen, auto-fitted ──────── */
+  const rdBody = document.getElementById("rd-body");
+  const c1 = document.getElementById("rd-c1");
+  const c2 = document.getElementById("rd-c2");
+  const rdCount = document.getElementById("rd-count");
+  const rdTitle = document.getElementById("rd-title");
+  let at = 0;
+
+  function nodesFor(i) {
+    return SV_SECTIONS[i].blocks.map(blockEl);
+  }
+
+  const c3 = document.getElementById("rd-c3");
+  const cols = [c1, c2, c3];
+
+  // Try a given number of columns; returns the largest font that fits, plus the packing.
+  function tryLayout(nodes, nCols) {
+    cols.forEach((c, i) => { c.hidden = i >= nCols; });
+    const availH = c1.clientHeight;
+    if (!availH) return null;
+    for (let fs = 1.9; fs >= 0.50; fs -= 0.04) {
+      rdBody.style.setProperty("--fs", fs.toFixed(3));
+      cols.forEach(c => { c.innerHTML = ""; });
+      nodes.forEach(n => c1.appendChild(n.cloneNode(true)));
+      const hs = [...c1.children].map(e => {
+        const cs = getComputedStyle(e);
+        return e.getBoundingClientRect().height +
+          (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
+      });
+      if (hs.some(h => h > availH)) continue;   // a single block taller than a column
+      const groups = [];
+      let cur = [], curH = 0;
+      for (let i = 0; i < hs.length; i++) {
+        if (curH + hs[i] > availH && cur.length) { groups.push(cur); cur = []; curH = 0; }
+        cur.push(i); curH += hs[i];
+      }
+      if (cur.length) groups.push(cur);
+      if (groups.length <= nCols) return { fs, groups };
+    }
+    return null;
+  }
+
+  function fit() {
+    const nodes = nodesFor(at);
+    const w = rdBody.clientWidth;
+    const maxCols = w > 1000 ? 3 : (w > 700 ? 2 : 1);
+
+    let r = tryLayout(nodes, maxCols);
+    // if it only needed fewer columns, give them the full width and let the type grow
+    if (r && r.groups.length < maxCols) {
+      const wider = tryLayout(nodes, Math.max(1, r.groups.length));
+      if (wider) r = wider;
+    }
+    if (!r) {
+      r = tryLayout(nodes, 1) || { fs: 0.5, groups: [nodes.map((_, i) => i)] };
+    }
+
+    rdBody.style.setProperty("--fs", r.fs.toFixed(3));
+    cols.forEach(c => { c.innerHTML = ""; c.hidden = true; });
+    r.groups.forEach((g, ci) => {
+      const col = cols[ci];
+      col.hidden = false;
+      g.forEach(i => col.appendChild(nodes[i]));
+    });
+    // last resort: let it scroll rather than clip
+    const over = cols.some(c => !c.hidden && c.scrollHeight > c.clientHeight + 2);
+    cols.forEach(c => c.classList.toggle("over", over));
+  }
+
+  function show(i) {
+    at = Math.max(0, Math.min(SV_SECTIONS.length - 1, i));
+    rdCount.textContent = (at + 1) + " / " + SV_SECTIONS.length;
+    rdTitle.textContent = SV_SECTIONS[at].title;
+    document.getElementById("rd-prev").disabled = at === 0;
+    document.getElementById("rd-next").textContent =
+      at === SV_SECTIONS.length - 1 ? "Finish ✓" : "Next ›";
+    requestAnimationFrame(fit);
+  }
+
+  function openRead(i) {
+    rd.hidden = false;
+    document.body.classList.add("reading");
+    show(i);
+  }
+  function closeRead() {
+    rd.hidden = true;
+    document.body.classList.remove("reading");
+  }
+
+  document.getElementById("read-start").addEventListener("click", () => openRead(0));
+  document.getElementById("rd-close").addEventListener("click", closeRead);
+  document.getElementById("rd-prev").addEventListener("click", () => show(at - 1));
+  document.getElementById("rd-next").addEventListener("click", () => {
+    if (at === SV_SECTIONS.length - 1) closeRead(); else show(at + 1);
+  });
+
+  // tap the page itself: right side forward, left side back
+  rdBody.addEventListener("click", e => {
+    if (e.target.closest("a")) return;
+    const r = rdBody.getBoundingClientRect();
+    if ((e.clientX - r.left) > r.width * 0.62) show(at + 1);
+    else if ((e.clientX - r.left) < r.width * 0.24) show(at - 1);
+  });
+
+  // swipe
+  let tx = 0, ty = 0;
+  rdBody.addEventListener("touchstart", e => {
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive: true });
+  rdBody.addEventListener("touchend", e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+      show(dx < 0 ? at + 1 : at - 1);
+    }
+  }, { passive: true });
+
+  document.addEventListener("keydown", e => {
+    if (rd.hidden) return;
+    if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); show(at + 1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); show(at - 1); }
+    if (e.key === "Escape") closeRead();
+  });
+
+  let rt = null;
+  window.addEventListener("resize", () => {
+    if (rd.hidden) return;
+    clearTimeout(rt);
+    rt = setTimeout(fit, 140);
   });
 
   if ("serviceWorker" in navigator) {

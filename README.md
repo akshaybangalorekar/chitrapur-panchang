@@ -29,13 +29,20 @@ The app also carries the full daily ritual: **`sandhyavandanam.html`** reproduce
 booklet *Saṅkshipta Sandhyāvandanam — Tṛtīya Āvṛttih* as readable text, step by step,
 so you can follow it while doing sandhyāvandanam instead of flipping through a PDF.
 
-- All 19 steps, from Ācamanam through to Gāyatrī prasthānam.
+- **Read mode** — one step filling the whole screen, auto-sized so it never needs
+  scrolling, with two large buttons (Back / Next) for busy hands. Tap the right or
+  left side of the page, or swipe, instead of hunting for the buttons.
+- All 17 steps, from Ācamanam through to Gāyatrī prasthānam.
 - Each mantra in **Devanagari** and in **roman transliteration** — switch between
   Devanagari / Both / Roman, and the choice is remembered.
 - The booklet's **English instructions** for each step (what to do with the hands
   and the water) sit in a highlighted box beside the mantra.
 - A **saṅkalpa reference** at the end: the māsa/ṛtu pairs, the sixteen tithi
   locatives and the seven vāra names, so the blanks in the saṅkalpa can be filled.
+
+Read mode fits the page by measuring each block and trying decreasing type sizes until
+the step packs into one column, two columns on a tablet, or three on a wide screen —
+so a long step like Ācamanam uses columns rather than scrolling.
 
 The text lives in `assets/sandhyavandanam.js` as structured data, so a correction is
 a one-line edit. The roman text is generated from the Devanagari by rule
