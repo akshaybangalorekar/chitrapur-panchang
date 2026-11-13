@@ -8,6 +8,9 @@
     "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima"];
   const STORE = "chitrapur.people.v1";
   const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  // saṅkalpa form of the weekday, as listed in the booklet's Appendix III
+  const VARA = ["Ravivāsare", "Chandravāsare", "Kujavāsare", "Saumyavāsare",
+    "Guruvāsare", "Bhārgavavāsare", "Sthiravāsare"];
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"];
   const PLACE_KEY = "chitrapur.place.v1";
@@ -167,7 +170,8 @@
       prettyDate(date) + (date === todayISO() ? " · today" : "");
 
     // vāra (weekday) and ayana (sun's northward / southward half) of the day shown
-    const vaar = DOW[new Date(date + "T12:00:00").getDay()];
+    const dow = new Date(date + "T12:00:00").getDay();
+    const vaar = VARA[dow];
     const ayana = ayanaFor(date);
 
     if (!r) {

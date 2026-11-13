@@ -1,6 +1,6 @@
 /* Service worker — lets the pañchāṅga open as a standalone app and work offline.
    Bump CACHE when you ship changes so old copies are cleared. */
-const CACHE = "chitrapur-panchang-v3";
+const CACHE = "chitrapur-panchang-v4";
 const SHELL = [
   "./",
   "./index.html",
@@ -8,6 +8,8 @@ const SHELL = [
   "./assets/app.js",
   "./assets/panchang.js",
   "./assets/analytics.js",
+  "./assets/sandhyavandanam.js",
+  "./sandhyavandanam.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",

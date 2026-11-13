@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sandhyāvandanam · Pañchāṅga</title>
+<meta name="description" content="Saṅkshipta Sandhyāvandanam — the full sequence in Devanagari and roman transliteration, with the instructions for each step.">
+<meta name="theme-color" content="#6b2320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sandhyāvandanam">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236b2320'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='%23d8b477' font-family='serif'%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("chitrapur.theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      var s = localStorage.getItem("chitrapur.script");
+      document.documentElement.dataset.script = (s === "dev" || s === "iast") ? s : "both";
+    } catch (e) { document.documentElement.dataset.script = "both"; }
+  })();
+</script>
+</head>
+<body data-script="both">
+<div class="accent-bar" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <a class="brand-mark" href="index.html" aria-label="Back to the pañchāṅga">ॐ</a>
+      <div class="brand-text">
+        <h1>Sandhyāvandanam</h1>
+        <p class="brand-sub">Saṅkshipta · Tṛtīya Āvṛttih</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <a class="ghost back-btn" href="index.html">‹ Pañchāṅga</a>
+      <button id="theme-toggle" class="icon-round" type="button" title="Switch theme" aria-label="Switch between light and dark">
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g class="rays"><path d="M12 2.4v2.6M12 19v2.6M2.4 12h2.6M19 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></g></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="card sv-intro">
+    <div class="card-head">
+      <div class="card-head-title">
+        <h2 class="eyebrow">How to use this</h2>
+        <p class="card-note">Work down the list, one step at a time. Choose the script you read most easily.</p>
+      </div>
+      <div class="card-head-tools">
+        <div class="script-toggle" role="group" aria-label="Script">
+          <button type="button" data-script="dev">देवनागरी</button>
+          <button type="button" data-script="both" class="on">Both</button>
+          <button type="button" data-script="iast">Roman</button>
+        </div>
+      </div>
+    </div>
+    <p class="muted small sv-tip">Tap any step to open it. Text in <em>italics inside brackets</em> is the instruction for that step — what to do with your hands and the water.</p>
+  </section>
+
+  <nav class="card sv-index" aria-label="Steps">
+    <h2 class="eyebrow">The sequence</h2>
+    <ol id="sv-index-list"></ol>
+  </nav>
+
+  <div id="sv-body"></div>
+
+  <section class="card" id="sv-reference">
+    <div class="card-head">
+      <div class="card-head-title">
+        <h2 class="eyebrow">Saṅkalpa reference</h2>
+        <p class="card-note">The words that fill the blanks in the saṅkalpa — from Appendix III of the booklet.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3 class="sv-h3">Māsa &amp; Ṛtu</h3>
+      <table class="sv-table"><thead><tr><th>Māsāḥ (months)</th><th>Ṛtu (season)</th></tr></thead><tbody id="sv-masa"></tbody></table>
+      <h3 class="sv-h3">Tithi</h3>
+      <ol class="sv-grid" id="sv-tithi"></ol>
+      <h3 class="sv-h3">Vārāḥ</h3>
+      <ol class="sv-grid" id="sv-vara"></ol>
+    </div>
+  </section>
+
+  <p class="muted small data-note">
+    Transcribed from <em>Saṅkshipta Sandhyāvandanam — Tṛtīya Āvṛttih</em>, published by
+    Shrī Chitrāpur Mat͟h, Shirāḷi (2nd edition 2016), and reproduced here as the Mat͟h
+    distributes it freely. The roman text is a transliteration of the Devanagari.
+    For ritual use, please follow your own guru-paramparā and the printed booklet.
+  </p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-rule"><span>❖</span></div>
+    <p>Published by Shrī Chitrāpur Mat͟h — Shirāḷi, Uttara Kannada, Karnāṭaka, India 581354 ·
+      <a href="https://www.chitrapurmath.net/" target="_blank" rel="noopener">chitrapurmath.net</a></p>
+  </div>
+</footer>
+
+<script src="assets/sandhyavandanam.js"></script>
+<script>
+(function () {
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  /* ── the sequence ─────────────────────────────────────── */
+  const body = document.getElementById("sv-body");
+  const index = document.getElementById("sv-index-list");
+
+  SV_SECTIONS.forEach((sec, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    const det = document.createElement("details");
+    det.className = "card sv-sec";
+    det.id = "sv-" + i;
+    if (i === 0) det.open = true;
+
+    const sum = document.createElement("summary");
+    sum.className = "sv-sum";
+    sum.innerHTML =
+      '<span class="sv-n">' + n + "</span>" +
+      '<span class="sv-ttl"><span class="sv-t">' + esc(sec.title) + "</span>" +
+      (sec.dev && sec.title !== sec.dev.replace(/॥/g, "").trim()
+        ? '<span class="sv-d">' + esc(sec.dev) + "</span>" : "") +
+      "</span>";
+    det.appendChild(sum);
+
+    const inner = document.createElement("div");
+    inner.className = "sv-body-in";
+    sec.blocks.forEach(b => {
+      if (b.t === "mantra") {
+        inner.insertAdjacentHTML("beforeend",
+          '<div class="sv-m">' +
+          (b.variant ? '<span class="sv-var">' + esc(b.variant) + "</span>" : "") +
+          '<p class="sv-dev">' + esc(b.dev) + "</p>" +
+          '<p class="sv-iast">' + esc(b.iast) + "</p>" +
+          "</div>");
+      } else if (b.t === "instr") {
+        inner.insertAdjacentHTML("beforeend", '<p class="sv-instr">' + esc(b.v) + "</p>");
+      } else {
+        inner.insertAdjacentHTML("beforeend",
+          '<p class="sv-sub"><span class="sv-dev">' + esc(b.dev) + "</span>" +
+          '<span class="sv-iast">' + esc(b.iast) + "</span></p>");
+      }
+    });
+    det.appendChild(inner);
+    body.appendChild(det);
+
+    const li = document.createElement("li");
+    li.innerHTML = '<a href="#sv-' + i + '"><span class="sv-n">' + n + "</span>" + esc(sec.title) + "</a>";
+    li.querySelector("a").addEventListener("click", () => { det.open = true; });
+    index.appendChild(li);
+  });
+
+  /* ── reference tables ─────────────────────────────────── */
+  document.getElementById("sv-masa").innerHTML = SV_REFERENCE.masaRitu
+    .map(r => "<tr><td>" + esc(r[0]) + "</td><td>" + esc(r[1]) + "</td></tr>").join("");
+  document.getElementById("sv-tithi").innerHTML = SV_REFERENCE.tithi
+    .map((t, i) => "<li><span class='sv-n'>" + (i + 1) + "</span>" + esc(t) + "</li>").join("");
+  document.getElementById("sv-vara").innerHTML = SV_REFERENCE.vara
+    .map((t, i) => "<li><span class='sv-n'>" + (i + 1) + "</span>" + esc(t) + "</li>").join("");
+
+  /* ── script toggle ────────────────────────────────────── */
+  const btns = document.querySelectorAll(".script-toggle button");
+  function paintScript(mode) {
+    document.documentElement.dataset.script = mode;
+    document.body.dataset.script = mode;
+    btns.forEach(b => b.classList.toggle("on", b.dataset.script === mode));
+    try { localStorage.setItem("chitrapur.script", mode); } catch (e) {}
+  }
+  const saved = (() => { try { return localStorage.getItem("chitrapur.script"); } catch (e) { return null; } })();
+  paintScript(saved === "dev" || saved === "iast" ? saved : "both");
+  btns.forEach(b => b.addEventListener("click", () => paintScript(b.dataset.script)));
+
+  /* ── theme toggle ─────────────────────────────────────── */
+  const tb = document.getElementById("theme-toggle");
+  if (tb) tb.addEventListener("click", () => {
+    const cur = document.documentElement.dataset.theme ||
+      (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
+    const next = cur === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("chitrapur.theme", next); } catch (e) {}
+  });
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
+})();
+</script>
+</body>
+</html>

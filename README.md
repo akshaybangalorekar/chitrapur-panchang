@@ -23,6 +23,27 @@ on GitHub Pages.
 - **Browse the calendar** — a month grid of tithi and nakshatra, click any day for
   full detail.
 
+## The Sandhyāvandanam reader
+
+The app also carries the full daily ritual: **`sandhyavandanam.html`** reproduces the
+booklet *Saṅkshipta Sandhyāvandanam — Tṛtīya Āvṛttih* as readable text, step by step,
+so you can follow it while doing sandhyāvandanam instead of flipping through a PDF.
+
+- All 19 steps, from Ācamanam through to Gāyatrī prasthānam.
+- Each mantra in **Devanagari** and in **roman transliteration** — switch between
+  Devanagari / Both / Roman, and the choice is remembered.
+- The booklet's **English instructions** for each step (what to do with the hands
+  and the water) sit in a highlighted box beside the mantra.
+- A **saṅkalpa reference** at the end: the māsa/ṛtu pairs, the sixteen tithi
+  locatives and the seven vāra names, so the blanks in the saṅkalpa can be filled.
+
+The text lives in `assets/sandhyavandanam.js` as structured data, so a correction is
+a one-line edit. The roman text is generated from the Devanagari by rule
+(`indic-transliteration`), not typed by hand.
+
+The Today card links to it, and it is cached by the service worker, so it works
+offline once opened.
+
 ## Where the data comes from
 
 The Math publishes its calendar as public iCal feeds on
@@ -104,6 +125,9 @@ an offline fallback).
 
 ## A note
 
-This is a convenience companion to the Math's own calendar, not a substitute. For
-religious observance, please confirm with the printed Mat͟h calendar or your local
-pañchāṅga.
+This is a convenience companion to the Math's own calendar, not a substitute.
+
+The Sandhyāvandanam text is reproduced from the Math's booklet as the Math distributes
+it freely; all rights remain with Shrī Chitrāpur Mat͟h, Shirāḷi. For ritual use, follow
+your own guru-paramparā and the printed booklet. For religious observance, please
+confirm with the printed Mat͟h calendar or your local pañchāṅga.
